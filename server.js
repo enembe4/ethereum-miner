@@ -27,6 +27,7 @@ const { estimateForLead, computeMargin } = require('./lib/pricing');
 const { notifyOwner, sendMail } = require('./lib/mailer');
 const calendar = require('./lib/calendar');
 const automations = require('./lib/automations');
+const chatai = require('./lib/chatai');
 const seed = require('./lib/seed');
 
 const app = express();
@@ -113,12 +114,32 @@ app.post('/api/quote', (req, res) => {
   res.json({ ok: true, reference: lead.id }); // NOTE: intentionally no price returned to the customer
 });
 
-app.post('/api/appointments', (req, res) => {
+/* Booking-time double-check against Google Calendar: even if a slot looked
+   free when the page loaded, re-verify at the moment of booking so nothing
+   can land on top of an event that appeared on the owner's calendar since. */
+async function googleSlotTaken(date, label) {
+  if (!calendar.enabled || !calendar.SLOTS[label]) return false;
+  const start = new Date(`${date}T${calendar.SLOTS[label]}:00`);
+  const end = new Date(start.getTime() + calendar.APPT_MIN * 60000);
+  const busy = await calendar.busyWindows(start.toISOString(), end.toISOString());
+  return busy.some((b) => new Date(b.start) < end && new Date(b.end) > start);
+}
+
+app.post('/api/appointments', async (req, res) => {
   const d = req.body || {};
   if (!d.name || !d.phone || !d.email) return res.status(400).json({ error: 'Name, phone, and email are required.' });
   if (d.appt_date && d.appt_time) {
     const clash = get("SELECT 1 FROM leads WHERE appt_date = ? AND appt_time = ? AND stage != 'Lost'", d.appt_date, d.appt_time);
     if (clash) return res.status(409).json({ error: 'That time was just taken — please pick another slot.' });
+    try {
+      if (await googleSlotTaken(d.appt_date, d.appt_time)) {
+        return res.status(409).json({ error: 'That time is no longer available — please pick another slot.' });
+      }
+    } catch (e) {
+      // Fail open on a Google API hiccup: the in-app guard above still holds,
+      // and blocking all bookings on an outage would be worse.
+      console.error('[calendar] booking-time busy check failed:', e.message);
+    }
   }
   const lead = createLead({ ...d, stage: 'Scheduled' }, 'schedule');
   if (d.appt_date) logActivity(lead.id, 'appointment', `Estimate booked: ${d.appt_type || 'visit'} on ${d.appt_date} ${d.appt_time || ''}`);
@@ -172,6 +193,27 @@ app.post('/api/chat', (req, res) => {
   }, 'chat');
   if (d.transcript) logActivity(lead.id, 'chat', `Transcript:\n${String(d.transcript).slice(0, 2000)}`);
   res.json({ ok: true, reference: lead.id });
+});
+
+/* Claude-powered chat. The widget checks /config once; /message runs a turn. */
+app.get('/api/chat/config', (_req, res) => res.json({ ai: chatai.enabled }));
+
+app.post('/api/chat/message', async (req, res) => {
+  if (!chatai.enabled) return res.json({ mode: 'scripted' });
+  try {
+    const result = await chatai.reply((req.body || {}).messages, async (input) => {
+      const lead = createLead({
+        name: input.name, phone: input.phone, email: input.email || null,
+        project_type: input.project_type || 'Interior',
+        notes: input.need ? `Chat (AI): ${input.need}` : 'Captured via AI chat assistant.',
+      }, 'chat');
+      return lead.id;
+    });
+    res.json({ text: result.text, leadRef: result.leadRef });
+  } catch (e) {
+    console.error('[chat]', e.message);
+    res.status(e.status === 400 ? 400 : 502).json({ error: 'Chat is unavailable right now.' });
+  }
 });
 
 /* Reviews: submit (public) + list approved (public) */
