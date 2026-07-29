@@ -89,7 +89,8 @@
         <div class="swatch" style="background:#e9e4d8;width:40px;flex:none;"></div>
         <div><strong>Accessible Beige</strong><br><small class="muted">SW 7036 · Interior</small></div>
       </div>
-      <button class="btn btn--block" style="margin-top:14px;">Add to my quote</button>
+      <button class="btn btn--block" id="addColor" style="margin-top:14px;">Add to my quote</button>
+      <p id="addedNote" style="margin-top:10px;text-align:center;color:var(--good);font-size:.85rem;display:none;">✓ Saved — it'll attach to your quote</p>
       <p style="margin-top:10px;"><small class="muted">Saved colors attach to your quote request so we price the exact finish.</small></p>
     </div>
   </div>
@@ -102,11 +103,19 @@
   <a href="quote.html" class="callbar__cta">Get a Free Quote</a>
 </div>
 
+<script src="js/chat.js"></script>
 <script>
 (function(){
   var sw=document.getElementById('sw'); if(!sw) return;
   sw.addEventListener('click',function(e){var s=e.target.closest('.swatch');if(!s)return;
     sw.querySelectorAll('.swatch').forEach(function(x){x.classList.remove('is-on')});s.classList.add('is-on');});
+  // Save the currently-shown selection so it rides along with a quote request.
+  var btn=document.getElementById('addColor');
+  if(btn) btn.addEventListener('click',function(){
+    var colors=[{name:'Accessible Beige', code:'SW 7036'}]; // wireframe: reads the shown selection
+    try{ localStorage.setItem('npc_colors', JSON.stringify(colors)); }catch(e){}
+    document.getElementById('addedNote').style.display='block';
+  });
 })();
 </script>
 </body>

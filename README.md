@@ -1,107 +1,102 @@
-# Nassau County Painting Co. — Website Wireframes
+# Nassau County Painting Co. — Website + Lead Pipeline
 
-Low-fidelity, **clickable wireframes** for a residential painting company serving
-Nassau County, NY. The goal at this stage is to agree on **structure, flow, and
-functionality** before adding real photography, brand colors, and visual polish.
+A working site for a residential painting company in Nassau County, NY, with a
+public marketing site, a lead-capture → CRM pipeline, moderated reviews, a
+customer portal, and a guided chat assistant. Built as a single, self-contained
+**Node + Express** app using the built-in `node:sqlite` (no external database or
+native build step).
 
-> These are intentionally grayscale "boxes and labels." Placeholder image tiles
-> (`IMAGE`, `PROJECT`, `PHOTO`) mark where your real photos will go.
+## Quick start
 
-## How to view
-
-No build step — just open the files in a browser:
-
-```
-open index.html        # or double-click it
+```bash
+npm install
+npm start            # http://localhost:3000
 ```
 
-Each page has a dark **wireframe banner** at the top with links to every screen
-(including the backend Admin), so you can click through the whole experience.
+On first run the database is created and seeded with demo leads + reviews so the
+pipeline isn't empty. Configuration is optional — copy `.env.example` to `.env`
+to change the admin password, set the notification email, wire up SMTP, etc.
 
-## The three core requirements
+- **Public site:** http://localhost:3000/
+- **Admin (login required):** http://localhost:3000/admin  ·  default `owner` / `paint123`
 
-| # | Requirement | Where it lives |
-|---|-------------|----------------|
-| 1 | Landing page + image gallery | `index.html`, `gallery.html` |
-| 2 | Quote → pipeline management | `quote.html` (public intake) → `admin/` (backend CRM) |
-| 3 | Moderated testimonials | `testimonials.html` (submit) → `admin/reviews.html` (approve) |
+## What's here
 
-### 1 · Landing + gallery
-`index.html` — hero, trust bar, services, filterable gallery preview, "how it
-works," why-us, testimonials preview, service-area, and repeated quote CTAs.
-`gallery.html` — full portfolio grid with type filters and a before/after slider.
+### Public site (`public/`)
+Landing page, services, gallery, multi-step **quote request**, **testimonials**
+(view + submit), **color visualizer**, **financing** (with a live payment
+estimator), **self-scheduling**, per-town **service-area** template, digital
+**proposal**, and the **customer portal**. A guided **chat** widget floats on
+every page. A sticky click-to-call bar shows on mobile.
 
-### 2 · Quote generator → pipeline (the important part)
-- **`quote.html`** — a 4-step form that feels fast ("instant") but is deliberately
-  **light on friction**: project type → home size/dimensions → details → contact.
-  It collects **name, phone, email, address + high-level dimensions** and shows a
-  confirmation — **never a price**, exactly as requested.
-- **`admin/index.html`** — pipeline dashboard. Every submission becomes a card in
-  a **lifecycle board** (New Lead → Contacted → Quote Sent → Scheduled →
-  In Progress → Completed → Lost), with an auto-estimated price + projected margin.
-- **`admin/lead.html`** — the lead detail with a **live profitability calculator**.
-  Adjust square footage, crew size, days, paint, supplies, overhead, and a
-  pre-1978 lead-safe toggle; price, cost, gross profit, margin %, and effective
-  crew hourly rate all recalculate instantly with a healthy/thin/reconsider
-  verdict. Includes an activity log for tracking the client lifecycle.
+### Backend / pipeline
+- **Lead intake** — the quote form, the scheduler, and the chat widget all POST
+  to the API, which creates a lead, auto-computes an estimate + projected margin,
+  and emails the owner (or logs it until email is configured). **The customer is
+  never shown a price** — only a "we'll be in touch" confirmation.
+- **Admin pipeline** (`/admin`, login-gated) — a lifecycle board (New Lead →
+  Contacted → Quote Sent → Scheduled → In Progress → Completed → Lost), a table
+  view, and metrics.
+- **Lead detail** — a live **profitability calculator**: adjust sq ft, crew,
+  days, paint, supplies, overhead, and a pre-1978 lead-safe toggle, and price,
+  cost, gross profit, margin %, and effective crew rate recompute instantly with
+  a healthy/thin/reconsider verdict. Save persists to the pipeline; "Send quote"
+  advances the lead and opens the proposal. Activity log included.
+- **Review moderation** — submitted reviews are **pending** until you approve
+  them; approved reviews appear on the public testimonials page. Approve / reply
+  / reject, with light spam + job-match cues.
+- **Customer portal** — customers sign in with their email + a one-time code
+  (logged to the server console until SMTP is configured) to track their project
+  status, appointment, selected colors, and — only once you've sent a quote —
+  their price + proposal.
 
-### 3 · Moderated reviews
-`testimonials.html` has a public "Leave a Review" form. Submissions do **not**
-publish automatically — they land in **`admin/reviews.html`**, a moderation queue
-where you approve, edit, reply, or reject (with light spam/verification cues).
+## Architecture
 
-## Pricing model (calibrated to Nassau County research)
-The estimator math is illustrative and **calibratable**. Research notes baked into
-the design: interior rates are typically quoted per **wall+ceiling surface area**
-(~$3.50–5.00/sq ft mid-band on Long Island), exterior per **home footprint**
-(+~50%/story), **labor ≈ 70% of cost**, NY metro runs **~30% above national**, and
-**pre-1978 homes add ~8–12%** for EPA lead-safe prep (common on LI). Real rate
-cards will live in Admin ▸ Settings.
-
-## File structure
 ```
-index.html              Landing page
-services.html           Services detail
-gallery.html            Portfolio / gallery
-quote.html              Multi-step quote request (lead intake)
-testimonials.html       Public reviews + submit form
-visualizer.html         Color visualizer (preview colors on your photo)
-financing.html          Financing + live monthly-payment estimator
-schedule.html           Self-schedule an estimate visit
-service-area.html       Per-town SEO landing template + areas index
-proposal.html           Digital proposal / e-sign (what customers receive)
-admin/
-  index.html            Pipeline dashboard (lifecycle board + table)
-  lead.html             Lead detail + profitability calculator
-  reviews.html          Review moderation queue
-css/wireframe.css       Shared low-fidelity design system
-js/quote.js             Multi-step form behavior
-js/admin.js             Live margin/profitability calculator
-assets/                 (real images land here later)
+server.js              Express app: static hosting, public API, portal, gated /admin
+lib/
+  db.js                node:sqlite schema + query helpers
+  pricing.js           estimate + margin math (source of truth; mirrored client-side)
+  mailer.js            notifications (nodemailer; log-only until SMTP set)
+  seed.js              demo data on first run
+public/                the public website (served at /)
+  *.html               pages
+  js/                  quote.js, chat.js, portal.js, admin-*.js, …
+  css/wireframe.css    shared design system
+admin/                 login-gated pages (served at /admin only after auth)
+  login.html, index.html, lead.html, reviews.html
+data/app.db            SQLite (gitignored, created on first run)
+.env.example           configuration template
 ```
 
-## Proposed features now wireframed (round 2)
-These were on the "proposals" list and are now clickable so you can react to them
-in context:
-- **Color visualizer** (`visualizer.html`) — likely a Sherwin-Williams/Benjamin
-  Moore embed; picked colors ride along with the quote.
-- **Financing** (`financing.html`) — Wisetack/Hearth-style; the payment estimator
-  works (drag the slider, pick a term).
-- **Self-scheduling** (`schedule.html`) — pick a date/time for an in-home, video,
-  or photo estimate; a booking creates a lead in the pipeline.
-- **Per-town service-area pages** (`service-area.html`) — one reusable template
-  that generates a page per Nassau town for local SEO.
-- **E-sign digital proposal** (`proposal.html`) — the customer-facing quote that
-  "Send this quote" on the Lead Detail links to; accept + e-sign advances the lead.
-- **Sticky click-to-call bar** — shows on mobile across the public site.
+Security notes: `/admin` is served only behind session auth (username + password,
+hashed with bcrypt); admin APIs return 401 when unauthenticated. The portal is a
+separate email-code session and only ever exposes safe fields (never internal
+cost/margin, and never a price before you've sent the quote).
 
-## Open decisions parked for later
-- **Notification email** for new leads — TBD (recipient not yet chosen).
-- **Real photos, logo, brand colors, copy** — you'll supply; wired in next.
-- **Backend implementation** — these are front-end wireframes; the CRM, email,
-  auth, and data storage get built once the flow is approved.
+## Configuration (`.env`)
 
-## Not-yet-built ideas (see proposals)
-Color visualizer embed, customer financing, online self-scheduling, e-sign
-proposals, per-town service-area pages, sticky click-to-call, live chat, and a
-customer project portal — researched and proposed for you to prioritize.
+| Var | Purpose |
+|-----|---------|
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Admin login (password is hashed at startup) |
+| `SESSION_SECRET` | Signs session cookies — set a long random value in production |
+| `OWNER_EMAIL` | Where new-lead / new-review alerts go (TBD) |
+| `SMTP_*` | Outbound email; blank = log-only mode (alerts + portal codes print to console) |
+| `ANTHROPIC_API_KEY` | Optional — hook to upgrade the chat assistant to Claude later |
+
+## Guided chat → AI (hook)
+The chat widget runs a scripted qualifying flow and files a lead. The `reply()`
+function in `public/js/chat.js` is the single place to swap in a Claude call once
+`ANTHROPIC_API_KEY` is set (see the TODO note there and in `server.js`).
+
+## Still to wire (next round)
+- The digital **proposal** page is currently a representative template; next step
+  is to load it from real lead data by token and record acceptance/e-sign.
+- Real photos, logo, brand colors, and copy (you'll supply).
+- Notification email recipient + SMTP credentials.
+- Production hardening: persistent session store, HTTPS, real photo uploads.
+
+## Wireframe note
+Pages still carry a dark "◧ Wireframe" dev banner (with quick links to every
+screen, including the login-gated admin). It's a development aid and is removed
+for production; the customer-facing navigation never links to the admin.

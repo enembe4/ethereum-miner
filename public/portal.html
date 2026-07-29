@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Project — Nassau County Painting Co.</title>
+<link rel="stylesheet" href="css/wireframe.css">
+</head>
+<body>
+
+<div class="wf-banner">
+  <span>◧ Customer Portal (email + one-time code)</span>
+  <span>Nav: <a href="index.html">Home</a> · <a href="quote.html">Get Quote</a> · <a href="testimonials.html">Reviews</a></span>
+</div>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="logo" href="index.html"><span class="mark">LOGO</span> Nassau&nbsp;Painting&nbsp;Co.</a>
+    <nav class="nav__links"><a href="index.html">← Website</a></nav>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap" style="max-width:560px;">
+
+    <!-- LOGIN -->
+    <div id="login">
+      <div class="center" style="margin-bottom:22px;">
+        <div class="eyebrow center">Customer Portal</div>
+        <h1>Track your project</h1>
+        <p>Enter the email you used to request your quote and we'll send you a one-time code.</p>
+      </div>
+      <div class="card card--pad-lg">
+        <div id="stepEmail">
+          <div class="field"><label>Email</label><input class="input" id="pEmail" type="email" placeholder="you@email.com"></div>
+          <button class="btn btn--block btn--lg" id="sendCode">Send my code</button>
+        </div>
+        <div id="stepCode" hidden>
+          <p>We sent a 6-digit code to <strong id="emailEcho"></strong>. Enter it below.</p>
+          <div id="devHint" class="note note--inline" style="display:none;"></div>
+          <div class="field"><label>One-time code</label><input class="input" id="pCode" inputmode="numeric" placeholder="123456"></div>
+          <button class="btn btn--block btn--lg" id="verifyCode">Sign in</button>
+          <p style="margin-top:10px;text-align:center;"><a href="#" id="backEmail">← Use a different email</a></p>
+        </div>
+        <div id="loginErr" class="tag tag--bad" style="display:none;margin-top:12px;"></div>
+      </div>
+      <p class="center" style="margin-top:14px;"><small class="muted">No account yet? <a href="quote.html">Request a quote →</a></small></p>
+    </div>
+
+    <!-- PROJECT -->
+    <div id="project" hidden></div>
+  </div>
+</section>
+
+<script src="js/portal.js"></script>
+</body>
+</html>

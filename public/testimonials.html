@@ -49,10 +49,10 @@
   </div>
 </section>
 
-<!-- reviews grid -->
+<!-- reviews grid (approved reviews load here from /api/reviews; samples below as fallback) -->
 <section class="section" style="padding-top:0;">
   <div class="wrap">
-    <div class="grid grid-3">
+    <div class="grid grid-3" id="reviewsGrid">
       <!-- card ×6 -->
       <div class="card">
         <div class="badge-row" style="justify-content:space-between;">
@@ -104,7 +104,7 @@
       <h2>Leave a Review</h2>
       <p>Recently worked with us? We'd love your feedback.</p>
     </div>
-    <form class="card card--pad-lg" onsubmit="event.preventDefault();this.hidden=true;document.getElementById('review-thanks').hidden=false;">
+    <form class="card card--pad-lg" id="reviewForm">
       <div class="field">
         <label>Your rating *</label>
         <div class="stars stars--input" style="font-size:1.8rem;" id="starInput">
@@ -112,23 +112,24 @@
         </div>
       </div>
       <div class="row">
-        <div class="field"><label>Name *</label><input class="input" placeholder="First name + last initial" required></div>
-        <div class="field"><label>Town *</label><input class="input" placeholder="e.g. Garden City" required></div>
+        <div class="field"><label>Name *</label><input class="input" id="rName" placeholder="First name + last initial" required></div>
+        <div class="field"><label>Town *</label><input class="input" id="rTown" placeholder="e.g. Garden City" required></div>
       </div>
       <div class="row">
-        <div class="field"><label>Email (private) *</label><input class="input" type="email" placeholder="For verification only — not published" required></div>
+        <div class="field"><label>Email (private) *</label><input class="input" id="rEmail" type="email" placeholder="For verification only — not published" required></div>
         <div class="field"><label>Project type</label>
-          <select class="select"><option>Interior</option><option>Exterior</option><option>Cabinets</option><option>Commercial</option><option>Other</option></select>
+          <select class="select" id="rProject"><option>Interior</option><option>Exterior</option><option>Cabinets</option><option>Commercial</option><option>Other</option></select>
         </div>
       </div>
       <div class="field">
         <label>Your review *</label>
-        <textarea class="input" rows="4" placeholder="Tell others about your experience…" required></textarea>
+        <textarea class="input" id="rBody" rows="4" placeholder="Tell others about your experience…" required></textarea>
       </div>
       <div class="field">
         <label>Add photos (optional)</label>
         <div class="ph" style="min-height:80px;"><span class="ph__label">📷 UPLOAD PROJECT PHOTOS</span></div>
       </div>
+      <div id="rErr" class="tag tag--bad" style="display:none;margin-bottom:12px;"></div>
       <button class="btn btn--block btn--lg" type="submit">Submit Review</button>
       <p style="margin:12px 0 0;text-align:center;"><small>🔎 Reviews are checked before publishing, usually within a day.</small></p>
     </form>
@@ -156,19 +157,59 @@
   <a href="quote.html" class="callbar__cta">Get a Free Quote</a>
 </div>
 
+<script src="js/chat.js"></script>
 <script>
-  // simple star picker for the wireframe
+  var rating = 0;
+  // star picker
   (function(){
     var wrap = document.getElementById('starInput'); if(!wrap) return;
-    var stars = [].slice.call(wrap.children); var val = 0;
+    var stars = [].slice.call(wrap.children);
     function paint(n){ stars.forEach(function(s,i){ s.style.color = i < n ? '#c9a227' : '#d7d7db'; }); }
     stars.forEach(function(s){
       s.addEventListener('mouseenter', function(){ paint(+s.dataset.v); });
-      s.addEventListener('click', function(){ val = +s.dataset.v; paint(val); });
+      s.addEventListener('click', function(){ rating = +s.dataset.v; paint(rating); });
     });
-    wrap.addEventListener('mouseleave', function(){ paint(val); });
+    wrap.addEventListener('mouseleave', function(){ paint(rating); });
     paint(0);
   })();
+
+  // load approved reviews (replaces the sample cards once any exist)
+  var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);}); };
+  var stars = function(n){ return '★★★★★☆☆☆☆☆'.slice(5-n,10-n); };
+  (async function(){
+    try {
+      var list = await (await fetch('/api/reviews')).json();
+      if (!list.length) return;
+      document.getElementById('reviewsGrid').innerHTML = list.map(function(r){
+        return '<div class="card"><div class="badge-row" style="justify-content:space-between;">'+
+          '<div class="stars">'+stars(r.rating)+'</div><span class="tag tag--good">Verified</span></div>'+
+          '<p style="margin-top:10px;">"'+esc(r.body)+'"</p>'+
+          (r.reply? '<div class="card" style="background:var(--wash);margin:8px 0;"><small class="muted">Owner reply:</small><br>'+esc(r.reply)+'</div>':'')+
+          '<div class="badge-row"><div class="ph ph--avatar"></div><div><strong>'+esc(r.name)+'</strong><br>'+
+          '<small>'+esc(r.town||'')+(r.project_type?' · '+esc(r.project_type):'')+'</small></div></div></div>';
+      }).join('');
+    } catch(e) {}
+  })();
+
+  // submit a review
+  document.getElementById('reviewForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var err = document.getElementById('rErr'); err.style.display='none';
+    var body = {
+      rating: rating, name: val('rName'), town: val('rTown'),
+      email: val('rEmail'), project_type: document.getElementById('rProject').value, body: val('rBody')
+    };
+    if (!rating) { err.textContent='Please pick a star rating.'; err.style.display='inline-block'; return; }
+    if (!body.name || !body.town || !body.email || !body.body) { err.textContent='Please fill in all required fields.'; err.style.display='inline-block'; return; }
+    try {
+      var r = await fetch('/api/reviews',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if (!r.ok) { var d = await r.json(); throw new Error(d.error||'Error'); }
+      document.getElementById('reviewForm').hidden = true;
+      document.getElementById('review-thanks').hidden = false;
+    } catch(ex){ err.textContent = ex.message; err.style.display='inline-block'; }
+    function val(id){ return document.getElementById(id).value.trim(); }
+  });
+  function val(id){ return document.getElementById(id).value.trim(); }
 </script>
 </body>
 </html>
