@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe · Get a Quote — Nassau County Painting Co.</title>
+<link rel="stylesheet" href="css/wireframe.css">
+</head>
+<body>
+
+<div class="wf-banner">
+  <span>◧ Wireframe · Quote Request (Lead Intake)</span>
+  <span>Nav: <a href="index.html">Home</a> · <a href="services.html">Services</a> · <a href="gallery.html">Gallery</a> · <a href="quote.html">Get Quote</a> · <a href="testimonials.html">Reviews</a> · <a href="admin/index.html">▸ Admin</a></span>
+</div>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="logo" href="index.html"><span class="mark">LOGO</span> Nassau&nbsp;Painting&nbsp;Co.</a>
+    <nav class="nav__links">
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="testimonials.html">Reviews</a>
+      <a href="tel:+15165550100">(516) 555-0100</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap" style="max-width:720px;">
+    <div class="center" style="margin-bottom:26px;">
+      <div class="eyebrow center">Free Estimate</div>
+      <h1>Let's price your project</h1>
+      <p>Answer a few quick questions. Takes about 2 minutes — no obligation.</p>
+    </div>
+
+    <!-- progress -->
+    <div class="steps" id="steps">
+      <div class="steps__item is-active" data-step="1">1 · Project</div>
+      <div class="steps__item" data-step="2">2 · Home Size</div>
+      <div class="steps__item" data-step="3">3 · Details</div>
+      <div class="steps__item" data-step="4">4 · Contact</div>
+    </div>
+
+    <form class="card card--pad-lg" id="quoteForm" novalidate>
+
+      <!-- STEP 1 : PROJECT TYPE -->
+      <section class="q-step" data-step="1">
+        <h2>What do you need painted?</h2>
+        <div class="field">
+          <label>Project type</label>
+          <div class="chips" data-single>
+            <span class="chip">Interior</span>
+            <span class="chip">Exterior</span>
+            <span class="chip">Interior + Exterior</span>
+            <span class="chip">Cabinets only</span>
+            <span class="chip">Commercial</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Which areas? (select all that apply)</label>
+          <div class="chips">
+            <span class="chip">Whole house</span>
+            <span class="chip">Living areas</span>
+            <span class="chip">Bedrooms</span>
+            <span class="chip">Kitchen</span>
+            <span class="chip">Bathrooms</span>
+            <span class="chip">Trim &amp; doors</span>
+            <span class="chip">Ceilings</span>
+            <span class="chip">Deck / fence</span>
+          </div>
+        </div>
+        <div class="note note--inline"><strong>Why this matters:</strong> project type + areas drive the square-footage math and the crew/time estimate on your end.</div>
+      </section>
+
+      <!-- STEP 2 : HOME SIZE / DIMENSIONS -->
+      <section class="q-step" data-step="2" hidden>
+        <h2>Tell us the size of your home</h2>
+        <p class="muted">High-level is fine — we'll confirm exact measurements before finalizing.</p>
+        <div class="row">
+          <div class="field">
+            <label>Approx. home size (sq ft)</label>
+            <input class="input" type="number" placeholder="e.g. 1,800" inputmode="numeric">
+            <div class="hint">Rough living-area square footage. Check your listing/tax record if unsure.</div>
+          </div>
+          <div class="field">
+            <label>Stories</label>
+            <select class="select"><option>1</option><option>1.5</option><option>2</option><option>3+</option></select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Bedrooms</label>
+            <select class="select"><option>Studio</option><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5+</option></select>
+          </div>
+          <div class="field">
+            <label>Bathrooms</label>
+            <select class="select"><option>1</option><option selected>2</option><option>3</option><option>4+</option></select>
+          </div>
+          <div class="field">
+            <label>Ceiling height</label>
+            <select class="select"><option selected>Standard (8 ft)</option><option>9 ft</option><option>10 ft+</option><option>Vaulted / mixed</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Wall condition</label>
+          <div class="chips" data-single>
+            <span class="chip">Good — light prep</span>
+            <span class="chip">Some patching needed</span>
+            <span class="chip">Heavy repair / water damage</span>
+            <span class="chip">Not sure</span>
+          </div>
+        </div>
+        <div class="note note--inline"><strong>Dimensions captured here</strong> feed the auto-estimate. We ask for approximate sq ft + stories + condition — enough for a realistic range without a site visit.</div>
+      </section>
+
+      <!-- STEP 3 : DETAILS / TIMING -->
+      <section class="q-step" data-step="3" hidden>
+        <h2>A few more details</h2>
+        <div class="field">
+          <label>When would you like the work done?</label>
+          <div class="chips" data-single>
+            <span class="chip">ASAP</span>
+            <span class="chip">Within a month</span>
+            <span class="chip">1–3 months</span>
+            <span class="chip">Just exploring</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Paint provided by</label>
+          <div class="chips" data-single>
+            <span class="chip">You choose &amp; supply (turnkey)</span>
+            <span class="chip">I'll provide the paint</span>
+            <span class="chip">Not sure yet</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Anything else we should know? (optional)</label>
+          <textarea class="input" rows="3" placeholder="Colors in mind, accent walls, tricky access, pets, HOA rules…"></textarea>
+        </div>
+        <div class="field">
+          <label>Add photos (optional, up to 6)</label>
+          <div class="ph" style="min-height:90px;"><span class="ph__label">📷 DRAG &amp; DROP or BROWSE<br>photos help us price accurately</span></div>
+        </div>
+      </section>
+
+      <!-- STEP 4 : CONTACT -->
+      <section class="q-step" data-step="4" hidden>
+        <h2>Where should we send your estimate?</h2>
+        <div class="row">
+          <div class="field">
+            <label>Full name *</label>
+            <input class="input" type="text" placeholder="Jane Homeowner" required>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Phone *</label>
+            <input class="input" type="tel" placeholder="(516) 555-0123" required>
+          </div>
+          <div class="field">
+            <label>Email *</label>
+            <input class="input" type="email" placeholder="jane@email.com" required>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Property address (Nassau County) *</label>
+            <input class="input" type="text" placeholder="123 Maple St, Garden City, NY 11530" required>
+          </div>
+        </div>
+        <div class="field">
+          <label>Preferred contact method</label>
+          <div class="chips" data-single>
+            <span class="chip is-on">Call</span>
+            <span class="chip">Text</span>
+            <span class="chip">Email</span>
+          </div>
+        </div>
+        <label style="display:flex;gap:9px;align-items:flex-start;font-size:.85rem;color:var(--ink-soft);">
+          <input type="checkbox" checked style="margin-top:3px;">
+          I agree to be contacted about my estimate. No spam — see privacy policy.
+        </label>
+        <div class="note note--inline"><strong>Required fields:</strong> name, phone, email, address — exactly what you asked to capture before releasing a price.</div>
+      </section>
+
+      <!-- CONFIRMATION -->
+      <section class="q-step" data-step="done" hidden>
+        <div class="center">
+          <div class="ph ph--avatar" style="margin:0 auto 14px;width:60px;height:60px;">✓</div>
+          <h2>Thanks — your request is in!</h2>
+          <p>We're reviewing your project details now and will reach out within <strong>1 business day</strong> with your personalized estimate.</p>
+          <div class="card" style="text-align:left;max-width:420px;margin:20px auto;">
+            <strong>What happens next</strong>
+            <ol style="margin:10px 0 0;padding-left:18px;color:var(--ink-soft);font-size:.92rem;line-height:1.8;">
+              <li>We confirm your details &amp; sq ft</li>
+              <li>We prepare a competitive, itemized quote</li>
+              <li>We call/text/email you — your choice</li>
+            </ol>
+          </div>
+          <a class="btn" href="index.html">Back to Home</a>
+          <div class="note"><strong>Deliberately no price on screen.</strong> The estimate is computed on the backend and routed to your pipeline. You review margins and reach out — the customer never sees an auto-quote.</div>
+        </div>
+      </section>
+
+      <!-- CONTROLS -->
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;gap:12px;" id="controls">
+        <button type="button" class="btn btn--plain" id="backBtn" hidden>← Back</button>
+        <span style="flex:1;"></span>
+        <button type="button" class="btn" id="nextBtn">Continue →</button>
+        <button type="button" class="btn" id="submitBtn" hidden>Submit Request →</button>
+      </div>
+    </form>
+
+    <p class="center" style="margin-top:18px;"><small>🔒 Your information is private and only used to prepare your estimate.</small></p>
+  </div>
+</section>
+
+<script src="js/quote.js"></script>
+</body>
+</html>

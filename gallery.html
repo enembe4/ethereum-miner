@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe · Gallery — Nassau County Painting Co.</title>
+<link rel="stylesheet" href="css/wireframe.css">
+</head>
+<body>
+
+<div class="wf-banner">
+  <span>◧ Wireframe · Gallery / Portfolio</span>
+  <span>Nav: <a href="index.html">Home</a> · <a href="services.html">Services</a> · <a href="gallery.html">Gallery</a> · <a href="quote.html">Get Quote</a> · <a href="testimonials.html">Reviews</a> · <a href="admin/index.html">▸ Admin</a></span>
+</div>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="logo" href="index.html"><span class="mark">LOGO</span> Nassau&nbsp;Painting&nbsp;Co.</a>
+    <nav class="nav__links">
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="testimonials.html">Reviews</a>
+      <a class="btn btn--sm" href="quote.html">Get a Free Quote</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section--tight" style="background:var(--paper);border-bottom:1px solid var(--line);">
+  <div class="wrap center" style="max-width:640px;">
+    <div class="eyebrow center">Our Work</div>
+    <h1>Recent projects across Nassau County</h1>
+    <p>Real homes, real crews. Filter by type or drag a before/after slider.</p>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap">
+    <div class="chips" style="justify-content:center;">
+      <span class="chip is-on">All</span>
+      <span class="chip">Interior</span>
+      <span class="chip">Exterior</span>
+      <span class="chip">Cabinets</span>
+      <span class="chip">Commercial</span>
+      <span class="chip">Before / After</span>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:8px;">
+  <div class="wrap">
+    <!-- Featured before/after -->
+    <div class="card" style="margin-bottom:22px;">
+      <span class="tag tag--accent">Before / After</span>
+      <div class="ph ph--wide" style="margin-top:12px;position:relative;">
+        <span class="ph__label">INTERACTIVE BEFORE / AFTER SLIDER<br>drag handle to reveal ◀ ▶</span>
+        <div style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:var(--accent);"></div>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:.8rem;">↔</div>
+      </div>
+      <p class="muted" style="margin-top:10px;font-size:.9rem;">Colonial exterior · Massapequa · full prep + 2 coats</p>
+    </div>
+
+    <!-- masonry-ish grid -->
+    <div class="grid grid-4">
+      <div class="ph ph--tall"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--sq"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--sq"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--tall"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--sq"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--tall"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--tall"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--sq"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--sq"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--tall"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--sq"><span class="ph__label">PROJECT</span></div>
+      <div class="ph ph--sq"><span class="ph__label">PROJECT</span></div>
+    </div>
+    <div class="center" style="margin-top:26px;"><button class="btn btn--plain">Load More</button></div>
+
+    <div class="note"><strong>How photos flow in:</strong> you upload project photos in <a href="admin/index.html">Admin ▸ Gallery / Photos</a>, tag each with a service type + town, and they populate this grid automatically. Send me your images whenever ready and I'll wire the library in.</div>
+  </div>
+</section>
+
+<section class="section center" style="background:var(--accent-2);border-top:1px solid #cddcff;">
+  <div class="wrap" style="max-width:640px;">
+    <h2>Want your home to look like this?</h2>
+    <a class="btn btn--lg" href="quote.html">Get My Free Quote →</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap footer__bottom" style="border:0;">
+    <span>© 2026 Nassau Painting Co. · Licensed &amp; Insured</span>
+    <span><a href="index.html">Home</a> · <a href="quote.html">Get a Quote</a></span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe · Admin — Review Moderation</title>
+<link rel="stylesheet" href="../css/wireframe.css">
+</head>
+<body>
+
+<div class="wf-banner">
+  <span>◧ Wireframe · ADMIN · Review Moderation Queue</span>
+  <span><a href="../testimonials.html">View public reviews page →</a></span>
+</div>
+
+<div class="admin-shell">
+  <aside class="admin-side">
+    <div class="logo"><span class="mark">LOGO</span> Admin</div>
+    <nav class="admin-nav">
+      <a href="index.html">◫ Pipeline</a>
+      <a href="lead.html">▤ Lead Detail</a>
+      <a href="reviews.html" class="is-active">★ Reviews <span class="tag" style="float:right;padding:2px 7px;">3</span></a>
+      <a href="#">▦ Gallery / Photos</a>
+      <a href="#">⚙ Settings</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1>Reviews</h1>
+      <span style="flex:1;"></span>
+      <div class="chips">
+        <span class="chip is-on">Pending (3)</span>
+        <span class="chip">Published (24)</span>
+        <span class="chip">Rejected (1)</span>
+      </div>
+    </div>
+
+    <div class="note"><strong>Nothing goes live without you.</strong> Every submission from the site's "Leave a Review" form lands here first. Approve to publish, reply publicly, edit for typos, or reject. This is the moderation gate you asked for.</div>
+
+    <!-- PENDING REVIEW 1 -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="badge-row" style="justify-content:space-between;">
+        <div class="badge-row">
+          <div class="ph ph--avatar"></div>
+          <div><strong>Michael D.</strong> · <small>Hicksville, NY</small><br>
+          <span class="stars">★★★★★</span> <small class="muted">· Interior · submitted 2h ago</small></div>
+        </div>
+        <span class="tag tag--warn">Pending</span>
+      </div>
+      <p style="margin:12px 0;">"Placeholder submitted review. The crew showed up on time, taped everything, and the walls look flawless. Fair price and no mess left behind. Would hire again."</p>
+      <div class="ph ph--wide" style="max-width:220px;margin-bottom:12px;"><span class="ph__label">ATTACHED PHOTO</span></div>
+      <dl class="kv" style="font-size:.82rem;margin-bottom:14px;">
+        <dt>Verify</dt><dd>michael.d@email.com · <span class="tag tag--good">✓ matches a completed job (O'Brien, Jul)</span></dd>
+      </dl>
+      <div class="badge-row">
+        <button class="btn btn--sm">✓ Approve &amp; Publish</button>
+        <button class="btn btn--ghost btn--sm">✎ Edit</button>
+        <button class="btn btn--plain btn--sm">↩ Reply publicly</button>
+        <button class="btn btn--plain btn--sm" style="color:var(--bad);border-color:#f2c3bb;">✕ Reject</button>
+      </div>
+    </div>
+
+    <!-- PENDING REVIEW 2 -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="badge-row" style="justify-content:space-between;">
+        <div class="badge-row">
+          <div class="ph ph--avatar"></div>
+          <div><strong>Sofia R.</strong> · <small>Valley Stream, NY</small><br>
+          <span class="stars">★★★★☆</span> <small class="muted">· Exterior · submitted 6h ago</small></div>
+        </div>
+        <span class="tag tag--warn">Pending</span>
+      </div>
+      <p style="margin:12px 0;">"Placeholder submitted review — a 4-star with a small critique. Great finish, though they ran a day over the estimate. Communication could've been a bit better mid-job."</p>
+      <dl class="kv" style="font-size:.82rem;margin-bottom:14px;">
+        <dt>Verify</dt><dd>sofia.r@email.com · <span class="tag">no job match found — confirm before publishing</span></dd>
+      </dl>
+      <div class="badge-row">
+        <button class="btn btn--sm">✓ Approve &amp; Publish</button>
+        <button class="btn btn--ghost btn--sm">✎ Edit</button>
+        <button class="btn btn--plain btn--sm">↩ Reply publicly</button>
+        <button class="btn btn--plain btn--sm" style="color:var(--bad);border-color:#f2c3bb;">✕ Reject</button>
+      </div>
+      <div class="note note--inline" style="margin-top:12px;">Replying to a critical-but-fair review shows prospects you're responsive — often more persuasive than an all-5★ wall.</div>
+    </div>
+
+    <!-- PENDING REVIEW 3 -->
+    <div class="card">
+      <div class="badge-row" style="justify-content:space-between;">
+        <div class="badge-row">
+          <div class="ph ph--avatar"></div>
+          <div><strong>Anonymous</strong> · <small>—</small><br>
+          <span class="stars">★☆☆☆☆</span> <small class="muted">· submitted 1d ago</small></div>
+        </div>
+        <span class="tag tag--bad">Flagged · likely spam</span>
+      </div>
+      <p style="margin:12px 0;">"Placeholder — generic 1-star with no project details and a suspicious link. Auto-flagged for review."</p>
+      <dl class="kv" style="font-size:.82rem;margin-bottom:14px;">
+        <dt>Verify</dt><dd>no email · <span class="tag tag--bad">contains external link · no job match</span></dd>
+      </dl>
+      <div class="badge-row">
+        <button class="btn btn--plain btn--sm" style="color:var(--bad);border-color:#f2c3bb;">✕ Reject</button>
+        <button class="btn btn--ghost btn--sm">Mark not spam</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

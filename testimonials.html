@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe · Reviews — Nassau County Painting Co.</title>
+<link rel="stylesheet" href="css/wireframe.css">
+</head>
+<body>
+
+<div class="wf-banner">
+  <span>◧ Wireframe · Testimonials (public view + submit)</span>
+  <span>Nav: <a href="index.html">Home</a> · <a href="services.html">Services</a> · <a href="gallery.html">Gallery</a> · <a href="quote.html">Get Quote</a> · <a href="testimonials.html">Reviews</a> · <a href="admin/index.html">▸ Admin</a></span>
+</div>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="logo" href="index.html"><span class="mark">LOGO</span> Nassau&nbsp;Painting&nbsp;Co.</a>
+    <nav class="nav__links">
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="testimonials.html">Reviews</a>
+      <a class="btn btn--sm" href="quote.html">Get a Free Quote</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section--tight" style="background:var(--paper);border-bottom:1px solid var(--line);">
+  <div class="wrap center" style="max-width:640px;">
+    <div class="eyebrow center">Reviews</div>
+    <h1>What Long Island homeowners say</h1>
+    <div class="stars" style="font-size:1.4rem;">★★★★★</div>
+    <p><strong>4.9 out of 5</strong> · based on 200+ verified reviews</p>
+    <a class="btn" href="#submit">Leave a Review</a>
+  </div>
+</section>
+
+<!-- filters -->
+<section class="section--tight">
+  <div class="wrap">
+    <div class="chips" style="justify-content:center;">
+      <span class="chip is-on">All</span>
+      <span class="chip">★★★★★ 5</span>
+      <span class="chip">Interior</span>
+      <span class="chip">Exterior</span>
+      <span class="chip">Cabinets</span>
+      <span class="chip">With photos</span>
+    </div>
+  </div>
+</section>
+
+<!-- reviews grid -->
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <div class="grid grid-3">
+      <!-- card ×6 -->
+      <div class="card">
+        <div class="badge-row" style="justify-content:space-between;">
+          <div class="stars">★★★★★</div><span class="tag tag--good">Verified</span>
+        </div>
+        <p style="margin-top:10px;">"Placeholder review text. Real approved reviews render here. Mention timeline, cleanliness, communication, and value."</p>
+        <div class="badge-row"><div class="ph ph--avatar"></div><div><strong>Homeowner Name</strong><br><small>Levittown, NY · Interior · Mar 2026</small></div></div>
+      </div>
+      <div class="card">
+        <div class="badge-row" style="justify-content:space-between;">
+          <div class="stars">★★★★★</div><span class="tag tag--good">Verified</span>
+        </div>
+        <p style="margin-top:10px;">"Placeholder review text with a project photo attached below."</p>
+        <div class="ph ph--wide" style="margin:8px 0;"><span class="ph__label">CUSTOMER PHOTO</span></div>
+        <div class="badge-row"><div class="ph ph--avatar"></div><div><strong>Homeowner Name</strong><br><small>Massapequa, NY · Exterior · Feb 2026</small></div></div>
+      </div>
+      <div class="card">
+        <div class="badge-row" style="justify-content:space-between;">
+          <div class="stars">★★★★☆</div><span class="tag tag--good">Verified</span>
+        </div>
+        <p style="margin-top:10px;">"Placeholder review text. A 4-star review reads as authentic and builds trust."</p>
+        <div class="badge-row"><div class="ph ph--avatar"></div><div><strong>Homeowner Name</strong><br><small>Mineola, NY · Cabinets · Feb 2026</small></div></div>
+      </div>
+      <div class="card">
+        <div class="stars">★★★★★</div>
+        <p style="margin-top:10px;">"Placeholder review text."</p>
+        <div class="badge-row"><div class="ph ph--avatar"></div><div><strong>Homeowner Name</strong><br><small>Garden City, NY · Interior · Jan 2026</small></div></div>
+      </div>
+      <div class="card">
+        <div class="stars">★★★★★</div>
+        <p style="margin-top:10px;">"Placeholder review text."</p>
+        <div class="badge-row"><div class="ph ph--avatar"></div><div><strong>Homeowner Name</strong><br><small>Freeport, NY · Exterior · Jan 2026</small></div></div>
+      </div>
+      <div class="card">
+        <div class="stars">★★★★★</div>
+        <p style="margin-top:10px;">"Placeholder review text."</p>
+        <div class="badge-row"><div class="ph ph--avatar"></div><div><strong>Homeowner Name</strong><br><small>Long Beach, NY · Interior · Dec 2025</small></div></div>
+      </div>
+    </div>
+    <div class="center" style="margin-top:26px;"><button class="btn btn--plain">Load More Reviews</button></div>
+  </div>
+</section>
+
+<!-- SUBMIT A REVIEW -->
+<section class="section" id="submit" style="background:var(--paper);border-top:1px solid var(--line);">
+  <div class="wrap" style="max-width:640px;">
+    <div class="center" style="margin-bottom:24px;">
+      <div class="eyebrow center">Share Your Experience</div>
+      <h2>Leave a Review</h2>
+      <p>Recently worked with us? We'd love your feedback.</p>
+    </div>
+    <form class="card card--pad-lg" onsubmit="event.preventDefault();this.hidden=true;document.getElementById('review-thanks').hidden=false;">
+      <div class="field">
+        <label>Your rating *</label>
+        <div class="stars stars--input" style="font-size:1.8rem;" id="starInput">
+          <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Name *</label><input class="input" placeholder="First name + last initial" required></div>
+        <div class="field"><label>Town *</label><input class="input" placeholder="e.g. Garden City" required></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Email (private) *</label><input class="input" type="email" placeholder="For verification only — not published" required></div>
+        <div class="field"><label>Project type</label>
+          <select class="select"><option>Interior</option><option>Exterior</option><option>Cabinets</option><option>Commercial</option><option>Other</option></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Your review *</label>
+        <textarea class="input" rows="4" placeholder="Tell others about your experience…" required></textarea>
+      </div>
+      <div class="field">
+        <label>Add photos (optional)</label>
+        <div class="ph" style="min-height:80px;"><span class="ph__label">📷 UPLOAD PROJECT PHOTOS</span></div>
+      </div>
+      <button class="btn btn--block btn--lg" type="submit">Submit Review</button>
+      <p style="margin:12px 0 0;text-align:center;"><small>🔎 Reviews are checked before publishing, usually within a day.</small></p>
+    </form>
+
+    <div class="card card--pad-lg center" id="review-thanks" hidden>
+      <div class="ph ph--avatar" style="margin:0 auto 14px;width:56px;height:56px;">✓</div>
+      <h3>Thank you!</h3>
+      <p>Your review was submitted and is pending approval. We appreciate you taking the time.</p>
+      <a class="btn btn--plain" href="index.html">Back to Home</a>
+    </div>
+
+    <div class="note"><strong>Moderation flow:</strong> submissions are <em>not</em> published automatically. Each one lands in <a href="admin/reviews.html">Admin ▸ Reviews</a> where you approve, reply, or reject — so nothing goes live without your say-so.</div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap footer__bottom" style="border:0;padding-top:0;">
+    <span>© 2026 Nassau Painting Co. · Licensed &amp; Insured</span>
+    <span><a href="index.html">Home</a> · <a href="quote.html">Get a Quote</a></span>
+  </div>
+</footer>
+
+<script>
+  // simple star picker for the wireframe
+  (function(){
+    var wrap = document.getElementById('starInput'); if(!wrap) return;
+    var stars = [].slice.call(wrap.children); var val = 0;
+    function paint(n){ stars.forEach(function(s,i){ s.style.color = i < n ? '#c9a227' : '#d7d7db'; }); }
+    stars.forEach(function(s){
+      s.addEventListener('mouseenter', function(){ paint(+s.dataset.v); });
+      s.addEventListener('click', function(){ val = +s.dataset.v; paint(val); });
+    });
+    wrap.addEventListener('mouseleave', function(){ paint(val); });
+    paint(0);
+  })();
+</script>
+</body>
+</html>

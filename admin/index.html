@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe · Admin — Pipeline</title>
+<link rel="stylesheet" href="../css/wireframe.css">
+</head>
+<body>
+
+<div class="wf-banner">
+  <span>◧ Wireframe · ADMIN (backend, not public) · Pipeline Dashboard</span>
+  <span><a href="../index.html">← Back to public site</a></span>
+</div>
+
+<div class="admin-shell">
+  <!-- SIDEBAR -->
+  <aside class="admin-side">
+    <div class="logo"><span class="mark">LOGO</span> Admin</div>
+    <nav class="admin-nav">
+      <a href="index.html" class="is-active">◫ Pipeline</a>
+      <a href="lead.html">▤ Lead Detail</a>
+      <a href="reviews.html">★ Reviews <span class="tag" style="float:right;padding:2px 7px;">3</span></a>
+      <a href="#">▦ Gallery / Photos</a>
+      <a href="#">⚙ Settings</a>
+    </nav>
+    <div style="padding:16px 18px;margin-top:20px;border-top:1px solid #333;">
+      <small style="color:#8a8a90;">Signed in as<br><strong style="color:#ddd;">Owner</strong></small>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1>Pipeline</h1>
+      <span style="flex:1;"></span>
+      <input class="input" style="max-width:220px;" placeholder="🔍 Search leads…">
+      <select class="select" style="max-width:150px;"><option>All time</option><option>This week</option><option>This month</option></select>
+    </div>
+
+    <!-- METRICS -->
+    <div class="metrics" style="margin-bottom:22px;">
+      <div class="metric"><b>7</b><span>New leads</span></div>
+      <div class="metric"><b>$34,850</b><span>Pipeline value</span></div>
+      <div class="metric"><b>4</b><span>Quotes out</span></div>
+      <div class="metric"><b>38%</b><span>Win rate (90d)</span></div>
+    </div>
+
+    <div class="note"><strong>How leads arrive:</strong> every quote-request from the site creates a card in <em>New Lead</em>, auto-scores an estimated price + rough margin (see Lead Detail), and emails you a notification. Drag cards across stages to track each client's lifecycle.</div>
+
+    <!-- KANBAN -->
+    <h3 style="margin:18px 0 12px;">Lifecycle board</h3>
+    <div class="kanban">
+      <div class="kanban__col">
+        <h4>New Lead <span>3</span></h4>
+        <a class="lead-card" href="lead.html">
+          <b>Jane Homeowner</b><div class="meta">Garden City · Interior · 3BR</div>
+          <div class="badge-row" style="justify-content:space-between;margin-top:8px;"><span class="amt">~$5,400</span><span class="tag tag--warn">new · 2h</span></div>
+        </a>
+        <a class="lead-card" href="lead.html">
+          <b>Marco P.</b><div class="meta">Massapequa · Exterior · 2 story</div>
+          <div class="badge-row" style="justify-content:space-between;margin-top:8px;"><span class="amt">~$8,900</span><span class="tag tag--warn">new · 5h</span></div>
+        </a>
+        <a class="lead-card" href="lead.html">
+          <b>Dana R.</b><div class="meta">Levittown · Cabinets</div>
+          <div class="badge-row" style="justify-content:space-between;margin-top:8px;"><span class="amt">~$3,200</span><span class="tag tag--warn">new · 1d</span></div>
+        </a>
+      </div>
+      <div class="kanban__col">
+        <h4>Contacted <span>1</span></h4>
+        <a class="lead-card" href="lead.html">
+          <b>Steven K.</b><div class="meta">Hicksville · Int+Ext</div>
+          <div class="badge-row" style="justify-content:space-between;margin-top:8px;"><span class="amt">~$11,200</span><span class="tag">called</span></div>
+        </a>
+      </div>
+      <div class="kanban__col">
+        <h4>Quote Sent <span>2</span></h4>
+        <a class="lead-card" href="lead.html">
+          <b>Priya N.</b><div class="meta">Mineola · Interior</div>
+          <div class="badge-row" style="justify-content:space-between;margin-top:8px;"><span class="amt">$6,100</span><span class="tag tag--accent">42% margin</span></div>
+        </a>
+        <a class="lead-card" href="lead.html">
+          <b>Tom &amp; Lisa</b><div class="meta">Freeport · Exterior</div>
+          <div class="badge-row" style="justify-content:space-between;margin-top:8px;"><span class="amt">$9,400</span><span class="tag tag--accent">36% margin</span></div>
+        </a>
+      </div>
+      <div class="kanban__col">
+        <h4>Scheduled <span>1</span></h4>
+        <a class="lead-card" href="lead.html">
+          <b>The Alvarez Home</b><div class="meta">Rockville Ctr · Interior</div>
+          <div class="badge-row" style="justify-content:space-between;margin-top:8px;"><span class="amt">$7,250</span><span class="tag tag--good">Aug 12</span></div>
+        </a>
+      </div>
+      <div class="kanban__col">
+        <h4>In Progress <span>1</span></h4>
+        <a class="lead-card" href="lead.html">
+          <b>Chen Residence</b><div class="meta">Long Beach · Int+Ext</div>
+          <div class="badge-row" style="justify-content:space-between;margin-top:8px;"><span class="amt">$12,800</span><span class="tag tag--good">day 2 of 4</span></div>
+        </a>
+      </div>
+      <div class="kanban__col">
+        <h4>Completed <span>1</span></h4>
+        <a class="lead-card" href="lead.html">
+          <b>O'Brien Home</b><div class="meta">Garden City · Interior</div>
+          <div class="badge-row" style="justify-content:space-between;margin-top:8px;"><span class="amt">$5,900</span><span class="tag">ask for review →</span></div>
+        </a>
+      </div>
+      <div class="kanban__col" style="opacity:.75;">
+        <h4>Lost <span>0</span></h4>
+        <div class="muted" style="font-size:.8rem;padding:8px;">Drag lost leads here. Track why (price, timing, no-response) for reporting.</div>
+      </div>
+    </div>
+
+    <!-- TABLE VIEW -->
+    <h3 style="margin:30px 0 12px;">All leads (table view)</h3>
+    <div class="card" style="padding:0;overflow-x:auto;">
+      <table class="table table--admin">
+        <thead><tr><th>Client</th><th>Town</th><th>Project</th><th>Est. price</th><th>Proj. margin</th><th>Stage</th><th>Age</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><b>Jane Homeowner</b></td><td>Garden City</td><td>Interior · 3BR</td><td>~$5,400</td><td><span class="tag tag--accent">41%</span></td><td>New Lead</td><td>2h</td><td><a href="lead.html">Open →</a></td></tr>
+          <tr><td><b>Marco P.</b></td><td>Massapequa</td><td>Exterior</td><td>~$8,900</td><td><span class="tag tag--accent">38%</span></td><td>New Lead</td><td>5h</td><td><a href="lead.html">Open →</a></td></tr>
+          <tr><td><b>Steven K.</b></td><td>Hicksville</td><td>Int+Ext</td><td>~$11,200</td><td><span class="tag tag--warn">29%</span></td><td>Contacted</td><td>1d</td><td><a href="lead.html">Open →</a></td></tr>
+          <tr><td><b>Priya N.</b></td><td>Mineola</td><td>Interior</td><td>$6,100</td><td><span class="tag tag--accent">42%</span></td><td>Quote Sent</td><td>3d</td><td><a href="lead.html">Open →</a></td></tr>
+          <tr><td><b>Chen Residence</b></td><td>Long Beach</td><td>Int+Ext</td><td>$12,800</td><td><span class="tag tag--good">44%</span></td><td>In Progress</td><td>9d</td><td><a href="lead.html">Open →</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

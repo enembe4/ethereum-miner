@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe · Admin — Lead Detail</title>
+<link rel="stylesheet" href="../css/wireframe.css">
+</head>
+<body>
+
+<div class="wf-banner">
+  <span>◧ Wireframe · ADMIN · Lead Detail + Profitability Calculator</span>
+  <span><a href="index.html">← Pipeline</a></span>
+</div>
+
+<div class="admin-shell">
+  <aside class="admin-side">
+    <div class="logo"><span class="mark">LOGO</span> Admin</div>
+    <nav class="admin-nav">
+      <a href="index.html">◫ Pipeline</a>
+      <a href="lead.html" class="is-active">▤ Lead Detail</a>
+      <a href="reviews.html">★ Reviews <span class="tag" style="float:right;padding:2px 7px;">3</span></a>
+      <a href="#">▦ Gallery / Photos</a>
+      <a href="#">⚙ Settings</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <!-- HEADER -->
+    <div class="admin-topbar" style="flex-wrap:wrap;">
+      <a href="index.html" style="font-size:.85rem;">← Pipeline</a>
+      <h1 style="width:100%;margin:6px 0 0;">Jane Homeowner</h1>
+      <span style="flex:1;"></span>
+      <label style="font-size:.8rem;color:var(--ink-faint);">Stage
+        <select class="select" style="min-width:150px;">
+          <option>New Lead</option><option>Contacted</option><option selected>Quote Sent</option>
+          <option>Scheduled</option><option>In Progress</option><option>Completed</option><option>Lost</option>
+        </select>
+      </label>
+      <button class="btn btn--plain btn--sm">✉ Email Quote</button>
+      <button class="btn btn--sm">✓ Mark Won</button>
+    </div>
+
+    <div class="grid grid-2" style="align-items:start;">
+
+      <!-- LEFT: CLIENT + JOB INPUTS -->
+      <div class="stack">
+
+        <!-- contact -->
+        <div class="card">
+          <h3>Client &amp; property</h3>
+          <dl class="kv">
+            <dt>Name</dt><dd>Jane Homeowner</dd>
+            <dt>Phone</dt><dd>(516) 555-0123 · <span class="tag">prefers Call</span></dd>
+            <dt>Email</dt><dd>jane@email.com</dd>
+            <dt>Address</dt><dd>123 Maple St, Garden City, NY 11530</dd>
+            <dt>Submitted</dt><dd>Jul 29, 2026 · 9:14 AM (via website)</dd>
+          </dl>
+        </div>
+
+        <!-- what they told us -->
+        <div class="card">
+          <h3>Project details <small>(from quote form)</small></h3>
+          <dl class="kv">
+            <dt>Type</dt><dd>Interior</dd>
+            <dt>Areas</dt><dd>Whole house · Trim &amp; doors · Ceilings</dd>
+            <dt>Home size</dt><dd>~1,800 sq ft · 1 story</dd>
+            <dt>Bed / bath</dt><dd>3 bed · 2 bath</dd>
+            <dt>Ceilings</dt><dd>Standard (8 ft)</dd>
+            <dt>Condition</dt><dd>Some patching needed</dd>
+            <dt>Timing</dt><dd>Within a month</dd>
+            <dt>Paint</dt><dd>Turnkey (we supply)</dd>
+            <dt>Notes</dt><dd>"Two accent walls in living room. Have a dog."</dd>
+          </dl>
+          <div class="ph ph--wide" style="margin-top:12px;"><span class="ph__label">3 PHOTOS ATTACHED</span></div>
+        </div>
+
+        <!-- COST INPUTS -->
+        <div class="card">
+          <h3>Cost inputs <small>— adjust to model the job</small></h3>
+
+          <div class="field">
+            <label>Billable square footage</label>
+            <input class="input" type="number" id="sqft" value="1800">
+            <div class="hint">Prefilled from the customer's answer. Refine after measuring.</div>
+          </div>
+
+          <div class="row">
+            <div class="field"><label>Rate ($/sq ft)</label><input class="input" type="number" step="0.05" id="rate" value="3.00">
+              <div class="hint">Local competitive interior rate.</div></div>
+            <div class="field"><label>Coats</label><select class="select" id="coats"><option>1</option><option selected>2</option><option>3</option></select></div>
+          </div>
+
+          <div class="divider"></div>
+          <strong style="font-size:.85rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.05em;">Labor</strong>
+          <div class="row" style="margin-top:10px;">
+            <div class="field"><label>Painters</label><input class="input" type="number" id="crew" value="2"></div>
+            <div class="field"><label>Days</label><input class="input" type="number" step="0.5" id="days" value="3"></div>
+            <div class="field"><label>Hrs/day</label><input class="input" type="number" id="hrsday" value="8"></div>
+          </div>
+          <div class="field"><label>Labor rate ($/hr, loaded)</label><input class="input" type="number" id="laborRate" value="45">
+            <div class="hint">Include payroll taxes, insurance, workers' comp.</div></div>
+
+          <div class="divider"></div>
+          <strong style="font-size:.85rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.05em;">Materials &amp; other</strong>
+          <div class="row" style="margin-top:10px;">
+            <div class="field"><label>Paint (gallons)</label><input class="input" type="number" id="gallons" value="11">
+              <div class="hint">Suggested: <span id="galSuggest">~11</span> gal.</div></div>
+            <div class="field"><label>$/gallon</label><input class="input" type="number" id="galPrice" value="45"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>Supplies ($)</label><input class="input" type="number" id="supplies" value="150"><div class="hint">Tape, plastic, rollers…</div></div>
+            <div class="field"><label>Other costs ($)</label><input class="input" type="number" id="other" value="100"><div class="hint">Travel, dump, rentals.</div></div>
+          </div>
+          <div class="field"><label>Overhead (% of price)</label><input class="input" type="number" step="0.5" id="overhead" value="5">
+            <div class="hint">Business overhead: marketing, admin, vehicle, software.</div></div>
+          <label style="display:flex;gap:9px;align-items:flex-start;font-size:.88rem;">
+            <input type="checkbox" id="leadSafe" style="margin-top:3px;">
+            <span><strong>Home built before 1978</strong> — adds 10% for EPA lead-safe (RRP) prep.
+            <br><small class="muted">Much of Long Island's housing stock qualifies. Applied to total cost.</small></span>
+          </label>
+          <div class="note note--inline" style="margin-top:12px;"><strong>Pricing basis:</strong> rate here is all-in per floor sq ft (calibratable in Settings). Nassau interior typically runs higher than national — research pegs the mid-band around $3.50–5.00 on a surface-area basis. Tune to your true costs.</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: PROFITABILITY OUTPUT (sticky) -->
+      <div class="stack" style="position:sticky;top:16px;">
+
+        <div class="card card--pad-lg">
+          <div class="badge-row" style="justify-content:space-between;">
+            <h3 style="margin:0;">Profitability</h3>
+            <span class="tag tag--good" id="verdict">Healthy</span>
+          </div>
+
+          <div class="calc-out" style="margin-top:14px;">
+            <div class="calc-line"><span>Quote price (to customer)</span><b id="oPrice">$5,400</b></div>
+            <div class="calc-line"><span>Labor cost</span><b id="oLabor">$2,160</b></div>
+            <div class="calc-line"><span>Paint</span><b id="oPaint">$495</b></div>
+            <div class="calc-line"><span>Supplies + other</span><b id="oMat">$250</b></div>
+            <div class="calc-line"><span>Overhead</span><b id="oOh">$270</b></div>
+            <div class="calc-line"><span>Total cost</span><b id="oCost">$3,175</b></div>
+            <div class="calc-line calc-total"><span>Gross profit</span><b id="oProfit">$2,225</b></div>
+            <div class="calc-line"><span>Gross margin</span><b id="oMargin">41.2%</b></div>
+            <div class="calc-line"><span>Effective crew rate</span><b id="oHourly">$— /hr</b></div>
+          </div>
+
+          <div class="field" style="margin-top:16px;">
+            <label>Override customer price ($) <small>— optional</small></label>
+            <input class="input" type="number" id="override" placeholder="Leave blank to use sq ft × rate">
+            <div class="hint">Set the final number you'll quote. Margin recalculates instantly.</div>
+          </div>
+
+          <div class="row">
+            <button class="btn btn--block">✉ Send this quote</button>
+            <button class="btn btn--plain btn--block">Save draft</button>
+          </div>
+        </div>
+
+        <div class="note" style="margin:0;"><strong>This is the interactive piece you asked for.</strong> Change any input on the left (sq ft, crew, days, paint, overhead, or override the price) and every number here recalculates live so you can decide, in seconds, whether the job clears your margin bar. Thresholds: <span class="tag tag--good">≥40% healthy</span> <span class="tag tag--warn">25–40% thin</span> <span class="tag tag--bad">&lt;25% reconsider</span>.</div>
+
+        <!-- ACTIVITY / LIFECYCLE -->
+        <div class="card">
+          <h3>Activity &amp; lifecycle</h3>
+          <div class="field"><textarea class="input" rows="2" placeholder="Add a note or log a call…"></textarea>
+            <button class="btn btn--sm" style="margin-top:8px;">Add note</button></div>
+          <div class="divider"></div>
+          <ul style="list-style:none;padding:0;margin:0;font-size:.88rem;">
+            <li style="padding:8px 0;border-bottom:1px dashed var(--line-soft);"><strong>Quote sent</strong> · $5,400 emailed <span class="muted">· Jul 29, 2:40 PM</span></li>
+            <li style="padding:8px 0;border-bottom:1px dashed var(--line-soft);"><strong>Called</strong> · left voicemail <span class="muted">· Jul 29, 11:05 AM</span></li>
+            <li style="padding:8px 0;border-bottom:1px dashed var(--line-soft);"><strong>Lead created</strong> · via website form <span class="muted">· Jul 29, 9:14 AM</span></li>
+            <li style="padding:8px 0;"><strong>Auto-estimate</strong> · ~$5,400 · 41% projected margin <span class="muted">· Jul 29, 9:14 AM</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../js/admin.js"></script>
+</body>
+</html>
