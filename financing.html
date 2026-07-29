@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe · Financing — Nassau County Painting Co.</title>
+<link rel="stylesheet" href="css/wireframe.css">
+</head>
+<body class="has-callbar">
+
+<div class="wf-banner">
+  <span>◧ Wireframe · Financing (proposed feature)</span>
+  <span>Nav: <a href="index.html">Home</a> · <a href="services.html">Services</a> · <a href="gallery.html">Gallery</a> · <a href="visualizer.html">Visualizer</a> · <a href="financing.html">Financing</a> · <a href="schedule.html">Schedule</a> · <a href="service-area.html">Areas</a> · <a href="quote.html">Quote</a> · <a href="admin/index.html">▸ Admin</a></span>
+</div>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="logo" href="index.html"><span class="mark">LOGO</span> Nassau&nbsp;Painting&nbsp;Co.</a>
+    <nav class="nav__links">
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="financing.html">Financing</a>
+      <a href="testimonials.html">Reviews</a>
+      <a class="btn btn--sm" href="quote.html">Get a Free Quote</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section--tight" style="background:var(--paper);border-bottom:1px solid var(--line);">
+  <div class="wrap center" style="max-width:680px;">
+    <div class="eyebrow center">Easy Monthly Payments</div>
+    <h1>Paint now, pay over time</h1>
+    <p>Break your project into affordable monthly payments. Checking your rate takes 2 minutes and <strong>won't affect your credit score</strong>.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;">
+    <!-- estimator -->
+    <div class="card card--pad-lg">
+      <h3>Estimate your monthly payment</h3>
+      <div class="field">
+        <label>Project amount</label>
+        <input class="input" type="range" id="amt" min="500" max="25000" step="250" value="6000">
+        <div class="badge-row" style="justify-content:space-between;"><small>$500</small><strong id="amtOut">$6,000</strong><small>$25,000</small></div>
+      </div>
+      <div class="field">
+        <label>Term</label>
+        <div class="chips" data-single id="term">
+          <span class="chip">12 mo</span>
+          <span class="chip is-on" data-m="24">24 mo</span>
+          <span class="chip" data-m="36">36 mo</span>
+          <span class="chip" data-m="60">60 mo</span>
+        </div>
+      </div>
+      <div class="calc-out">
+        <div class="calc-line calc-total"><span>Est. monthly payment</span><b id="mo">$—</b></div>
+        <div class="calc-line"><span>Est. APR (sample)</span><b>9.9%</b></div>
+        <div class="calc-line"><span>Financing partner</span><b>Wisetack / Hearth</b></div>
+      </div>
+      <a class="btn btn--block btn--lg" style="margin-top:16px;" href="#">Check my rate — no credit impact</a>
+      <p style="margin-top:10px;text-align:center;"><small class="muted">Illustrative only. Actual terms set by the lender based on credit.</small></p>
+    </div>
+
+    <!-- why -->
+    <div class="stack">
+      <div class="card"><strong>✓ No impact to check</strong><p style="margin:4px 0 0;">Pre-qualify in minutes; checking your rate is a soft pull.</p></div>
+      <div class="card"><strong>✓ $500 – $25,000</strong><p style="margin:4px 0 0;">Covers everything from a single room to a full exterior.</p></div>
+      <div class="card"><strong>✓ We're paid up front</strong><p style="margin:4px 0 0;">You pay the lender monthly; we get paid in full — so scheduling isn't delayed.</p></div>
+      <div class="card"><strong>✓ 0% APR options</strong><p style="margin:4px 0 0;">Promotional 0% tiers available for qualified buyers.</p></div>
+      <div class="note note--inline"><strong>Build note:</strong> this is a vendor embed (Wisetack or Hearth) — low lift, no per-job fee to you, no lending risk on your side. The estimator here is a wireframe of their widget.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section center" style="background:var(--accent-2);border-top:1px solid #cddcff;">
+  <div class="wrap" style="max-width:640px;">
+    <h2>Ready to start?</h2>
+    <p>Get your free quote first — financing can be applied at checkout.</p>
+    <a class="btn btn--lg" href="quote.html">Get My Free Quote →</a>
+  </div>
+</section>
+
+<div class="callbar">
+  <a href="tel:+15165550100">📞 Call</a>
+  <a href="quote.html" class="callbar__cta">Get a Free Quote</a>
+</div>
+
+<script>
+(function(){
+  var amt=document.getElementById('amt'), amtOut=document.getElementById('amtOut'),
+      mo=document.getElementById('mo'), term=document.getElementById('term');
+  var months=24, apr=0.099;
+  function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
+  function calc(){
+    var P=+amt.value, r=apr/12, n=months;
+    var pay = r>0 ? P*r/(1-Math.pow(1+r,-n)) : P/n;
+    amtOut.textContent=money(P); mo.textContent=money(pay)+'/mo';
+  }
+  amt.addEventListener('input',calc);
+  term.addEventListener('click',function(e){var c=e.target.closest('.chip');if(!c)return;
+    term.querySelectorAll('.chip').forEach(function(x){x.classList.remove('is-on')});c.classList.add('is-on');
+    months=+(c.dataset.m|| (c.textContent.match(/\d+/)||[24])[0]); calc();});
+  calc();
+})();
+</script>
+</body>
+</html>

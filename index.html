@@ -6,12 +6,12 @@
 <title>Wireframe · Home — Nassau County Painting Co.</title>
 <link rel="stylesheet" href="css/wireframe.css">
 </head>
-<body>
+<body class="has-callbar">
 
 <!-- Wireframe mode indicator (remove for production) -->
 <div class="wf-banner">
   <span>◧ Wireframe · Low-fidelity · Home / Landing</span>
-  <span>Nav: <a href="index.html">Home</a> · <a href="services.html">Services</a> · <a href="gallery.html">Gallery</a> · <a href="quote.html">Get Quote</a> · <a href="testimonials.html">Reviews</a> · <a href="admin/index.html">▸ Admin (backend)</a></span>
+  <span>Nav: <a href="index.html">Home</a> · <a href="services.html">Services</a> · <a href="gallery.html">Gallery</a> · <a href="visualizer.html">Visualizer</a> · <a href="financing.html">Financing</a> · <a href="schedule.html">Schedule</a> · <a href="service-area.html">Areas</a> · <a href="quote.html">Quote</a> · <a href="testimonials.html">Reviews</a> · <a href="admin/index.html">▸ Admin</a></span>
 </div>
 
 <!-- ============ NAV ============ -->
@@ -21,8 +21,9 @@
     <nav class="nav__links">
       <a href="services.html">Services</a>
       <a href="gallery.html">Gallery</a>
+      <a href="visualizer.html">Visualizer</a>
       <a href="testimonials.html">Reviews</a>
-      <a href="#area">Service Area</a>
+      <a href="financing.html">Financing</a>
       <a href="tel:+15165550100">(516) 555-0100</a>
       <a class="btn btn--sm" href="quote.html">Get a Free Quote</a>
     </nav>
@@ -110,6 +111,19 @@
         <a href="services.html">Learn more →</a>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ============ COLOR VISUALIZER PROMO ============ -->
+<section class="section" style="border-top:1px solid var(--line);">
+  <div class="wrap hero__grid">
+    <div>
+      <div class="eyebrow">New · Try It Free</div>
+      <h2>See the color on your own home</h2>
+      <p>Upload a photo and preview real paint colors on your walls or siding before you commit. Save your favorites and we'll price the exact finish.</p>
+      <a class="btn btn--lg" href="visualizer.html">Open the Color Visualizer →</a>
+    </div>
+    <div class="ph ph--hero"><span class="ph__label">VISUALIZER PREVIEW<br>photo with color applied</span></div>
   </div>
 </section>
 
@@ -233,9 +247,20 @@
       <div class="eyebrow">Where We Work</div>
       <h2>Proudly serving Nassau County</h2>
       <p>Garden City · Hempstead · Massapequa · Levittown · Hicksville · Freeport · Rockville Centre · Long Beach · Mineola · Oyster Bay · Glen Cove · Valley Stream · and surrounding towns.</p>
-      <a class="btn" href="quote.html">Check My Address &amp; Get a Quote</a>
+      <div class="badge-row">
+        <a class="btn" href="quote.html">Check My Address &amp; Get a Quote</a>
+        <a class="btn btn--ghost" href="service-area.html">See Your Town →</a>
+      </div>
     </div>
     <div class="ph ph--hero"><span class="ph__label">MAP OF NASSAU COUNTY<br>service-area highlight</span></div>
+  </div>
+</section>
+
+<!-- ============ FINANCING STRIP ============ -->
+<section class="section--tight" style="background:var(--paper);border-top:1px solid var(--line);">
+  <div class="wrap" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:center;text-align:center;">
+    <div><strong style="font-size:1.15rem;">💳 Flexible financing available</strong><br><small class="muted">Paint now, pay monthly — from ~$99/mo. Checking your rate won't affect your credit.</small></div>
+    <a class="btn btn--plain" href="financing.html">See Financing Options</a>
   </div>
 </section>
 
@@ -262,7 +287,7 @@
     </div>
     <div>
       <h4>Company</h4>
-      <p style="line-height:2;"><a href="gallery.html">Gallery</a><br><a href="testimonials.html">Reviews</a><br><a href="#area">Service Area</a><br><a href="quote.html">Get a Quote</a></p>
+      <p style="line-height:2;"><a href="gallery.html">Gallery</a><br><a href="visualizer.html">Color Visualizer</a><br><a href="financing.html">Financing</a><br><a href="schedule.html">Book an Estimate</a><br><a href="service-area.html">Service Areas</a><br><a href="testimonials.html">Reviews</a></p>
     </div>
     <div>
       <h4>Contact</h4>
@@ -274,6 +299,12 @@
     <span>Privacy · Terms</span>
   </div>
 </footer>
+
+<!-- sticky click-to-call (mobile) -->
+<div class="callbar">
+  <a href="tel:+15165550100">📞 Call (516) 555-0100</a>
+  <a href="quote.html" class="callbar__cta">Get a Free Quote</a>
+</div>
 
 </body>
 </html>

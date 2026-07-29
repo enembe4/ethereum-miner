@@ -278,3 +278,33 @@ small { color: var(--ink-faint); }
 .calc-line:last-child { border-bottom:0; }
 .calc-line b { font-variant-numeric: tabular-nums; }
 .calc-total { font-size:1.15rem; font-weight:750; }
+
+/* sticky mobile click-to-call bar */
+.callbar {
+  position: fixed; left:0; right:0; bottom:0; z-index:60;
+  background: var(--ink); color:#fff;
+  display:flex; gap:0;
+  box-shadow: 0 -2px 12px rgba(0,0,0,.18);
+}
+.callbar a { flex:1; text-align:center; padding:14px 8px; color:#fff; font-weight:600; font-size:.92rem; }
+.callbar a:hover { text-decoration:none; background:#333; }
+.callbar a + a { border-left:1px solid #3a3a3f; }
+.callbar .callbar__cta { background: var(--accent); }
+body.has-callbar { padding-bottom:56px; }
+@media (min-width: 761px){ .callbar{ display:none; } body.has-callbar{ padding-bottom:0; } }
+
+/* scheduler slot grid */
+.cal { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+.cal .dow { text-align:center; font:700 .72rem var(--mono); color:var(--ink-faint); padding-bottom:4px; }
+.cal .day { aspect-ratio:1; border:1px solid var(--line); border-radius:var(--radius); display:grid; place-items:center; cursor:pointer; font-size:.9rem; background:var(--paper); }
+.cal .day.is-muted { color:var(--line); border-color:var(--line-soft); cursor:default; background:var(--wash); }
+.cal .day.is-on { border-color:var(--accent); background:var(--accent-2); color:var(--accent); font-weight:700; }
+.slots { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.slot { padding:10px; text-align:center; border:1px solid var(--line); border-radius:var(--radius); cursor:pointer; font-size:.88rem; background:var(--paper); }
+.slot.is-on { border-color:var(--accent); background:var(--accent-2); color:var(--accent); font-weight:600; }
+
+/* swatch grid for visualizer */
+.swatches { display:grid; grid-template-columns:repeat(auto-fill,minmax(58px,1fr)); gap:8px; }
+.swatch { aspect-ratio:1; border-radius:var(--radius); border:1px solid rgba(0,0,0,.08); cursor:pointer; position:relative; }
+.swatch.is-on::after { content:"✓"; position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,.4); }
+.swatch small { position:absolute; bottom:-16px; left:0; right:0; text-align:center; font-size:.6rem; color:var(--ink-faint); }

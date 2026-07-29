@@ -65,6 +65,11 @@ services.html           Services detail
 gallery.html            Portfolio / gallery
 quote.html              Multi-step quote request (lead intake)
 testimonials.html       Public reviews + submit form
+visualizer.html         Color visualizer (preview colors on your photo)
+financing.html          Financing + live monthly-payment estimator
+schedule.html           Self-schedule an estimate visit
+service-area.html       Per-town SEO landing template + areas index
+proposal.html           Digital proposal / e-sign (what customers receive)
 admin/
   index.html            Pipeline dashboard (lifecycle board + table)
   lead.html             Lead detail + profitability calculator
@@ -74,6 +79,21 @@ js/quote.js             Multi-step form behavior
 js/admin.js             Live margin/profitability calculator
 assets/                 (real images land here later)
 ```
+
+## Proposed features now wireframed (round 2)
+These were on the "proposals" list and are now clickable so you can react to them
+in context:
+- **Color visualizer** (`visualizer.html`) — likely a Sherwin-Williams/Benjamin
+  Moore embed; picked colors ride along with the quote.
+- **Financing** (`financing.html`) — Wisetack/Hearth-style; the payment estimator
+  works (drag the slider, pick a term).
+- **Self-scheduling** (`schedule.html`) — pick a date/time for an in-home, video,
+  or photo estimate; a booking creates a lead in the pipeline.
+- **Per-town service-area pages** (`service-area.html`) — one reusable template
+  that generates a page per Nassau town for local SEO.
+- **E-sign digital proposal** (`proposal.html`) — the customer-facing quote that
+  "Send this quote" on the Lead Detail links to; accept + e-sign advances the lead.
+- **Sticky click-to-call bar** — shows on mobile across the public site.
 
 ## Open decisions parked for later
 - **Notification email** for new leads — TBD (recipient not yet chosen).

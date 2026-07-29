@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe · Color Visualizer — Nassau County Painting Co.</title>
+<link rel="stylesheet" href="css/wireframe.css">
+</head>
+<body class="has-callbar">
+
+<div class="wf-banner">
+  <span>◧ Wireframe · Color Visualizer (proposed feature)</span>
+  <span>Nav: <a href="index.html">Home</a> · <a href="services.html">Services</a> · <a href="gallery.html">Gallery</a> · <a href="visualizer.html">Visualizer</a> · <a href="financing.html">Financing</a> · <a href="schedule.html">Schedule</a> · <a href="service-area.html">Areas</a> · <a href="quote.html">Quote</a> · <a href="admin/index.html">▸ Admin</a></span>
+</div>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="logo" href="index.html"><span class="mark">LOGO</span> Nassau&nbsp;Painting&nbsp;Co.</a>
+    <nav class="nav__links">
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="visualizer.html">Visualizer</a>
+      <a href="testimonials.html">Reviews</a>
+      <a class="btn btn--sm" href="quote.html">Get a Free Quote</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section--tight" style="background:var(--paper);border-bottom:1px solid var(--line);">
+  <div class="wrap center" style="max-width:680px;">
+    <div class="eyebrow center">Try Before You Buy</div>
+    <h1>See the color on <em>your</em> home</h1>
+    <p>Upload a photo of your room or house and preview real paint colors — no guesswork.</p>
+    <div class="note note--inline"><strong>Build note:</strong> fastest path is embedding Sherwin-Williams "ColorSnap for Web" or Benjamin Moore's visualizer (low effort, proven). A custom AI version that preserves texture/shadows is possible but higher effort. Wireframe below shows the intended UX either way.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start;">
+    <!-- canvas -->
+    <div class="card" style="padding:14px;">
+      <div class="ph" style="min-height:420px;position:relative;">
+        <span class="ph__label">YOUR PHOTO — color applied to walls/siding here<br>(drag to select surfaces · pinch to zoom)</span>
+        <div style="position:absolute;top:12px;left:12px;" class="badge-row">
+          <button class="btn btn--sm btn--plain">↑ Upload photo</button>
+          <button class="btn btn--sm btn--plain">🖼 Use a sample room</button>
+        </div>
+        <div style="position:absolute;bottom:12px;right:12px;" class="badge-row">
+          <button class="btn btn--sm btn--plain">↺ Reset</button>
+          <button class="btn btn--sm btn--plain">⤓ Save / Share</button>
+        </div>
+      </div>
+      <div class="badge-row" style="margin-top:12px;justify-content:space-between;">
+        <div class="chips" data-single>
+          <span class="chip is-on">Walls</span>
+          <span class="chip">Trim</span>
+          <span class="chip">Ceiling</span>
+          <span class="chip">Front door</span>
+          <span class="chip">Siding</span>
+        </div>
+        <a class="btn" href="quote.html">Love it? Get a quote →</a>
+      </div>
+    </div>
+
+    <!-- palette -->
+    <div class="card">
+      <h3>Pick a color</h3>
+      <input class="input" placeholder="🔍 Search 1,500+ colors">
+      <div class="chips" style="margin:12px 0;">
+        <span class="chip is-on">Popular</span><span class="chip">Neutrals</span><span class="chip">Whites</span><span class="chip">Blues</span><span class="chip">Greens</span>
+      </div>
+      <div class="swatches" id="sw">
+        <div class="swatch is-on" style="background:#e9e4d8;"></div>
+        <div class="swatch" style="background:#cfc9b8;"></div>
+        <div class="swatch" style="background:#9fa89a;"></div>
+        <div class="swatch" style="background:#6b7b74;"></div>
+        <div class="swatch" style="background:#37424a;"></div>
+        <div class="swatch" style="background:#2b3d52;"></div>
+        <div class="swatch" style="background:#7c92a8;"></div>
+        <div class="swatch" style="background:#b8c4cc;"></div>
+        <div class="swatch" style="background:#efeae2;"></div>
+        <div class="swatch" style="background:#d8cfc2;"></div>
+        <div class="swatch" style="background:#8a6f57;"></div>
+        <div class="swatch" style="background:#5c4a3a;"></div>
+      </div>
+      <div class="divider"></div>
+      <strong style="font-size:.9rem;">Selected</strong>
+      <div class="badge-row" style="margin-top:8px;">
+        <div class="swatch" style="background:#e9e4d8;width:40px;flex:none;"></div>
+        <div><strong>Accessible Beige</strong><br><small class="muted">SW 7036 · Interior</small></div>
+      </div>
+      <button class="btn btn--block" style="margin-top:14px;">Add to my quote</button>
+      <p style="margin-top:10px;"><small class="muted">Saved colors attach to your quote request so we price the exact finish.</small></p>
+    </div>
+  </div>
+
+  <div class="wrap"><div class="note"><strong>Ties into the pipeline:</strong> colors a visitor picks here can ride along with their quote submission, so the lead card in Admin already shows their intended palette.</div></div>
+</section>
+
+<div class="callbar">
+  <a href="tel:+15165550100">📞 Call</a>
+  <a href="quote.html" class="callbar__cta">Get a Free Quote</a>
+</div>
+
+<script>
+(function(){
+  var sw=document.getElementById('sw'); if(!sw) return;
+  sw.addEventListener('click',function(e){var s=e.target.closest('.swatch');if(!s)return;
+    sw.querySelectorAll('.swatch').forEach(function(x){x.classList.remove('is-on')});s.classList.add('is-on');});
+})();
+</script>
+</body>
+</html>
