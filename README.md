@@ -103,10 +103,25 @@ per lead, tracked in `automation_log`, so restarts never double-send):
 
 All of it honors the mailer's log-only mode until SMTP is configured.
 
-## Guided chat → AI (hook)
-The chat widget runs a scripted qualifying flow and files a lead. The `reply()`
-function in `public/js/chat.js` is the single place to swap in a Claude call once
-`ANTHROPIC_API_KEY` is set (see the TODO note there and in `server.js`).
+## AI chat assistant
+With `ANTHROPIC_API_KEY` set in `.env`, the website chat is a real Claude
+assistant (`lib/chatai.js`): it answers questions about services, the service
+area, and the process; it is hard-ruled to **never quote a price** (estimates
+only come from you); and once it has a name + phone it files the lead into the
+pipeline itself via a `save_lead` tool call. Degradation is graceful at every
+layer — no key means the guided scripted flow runs instead, and an API error
+mid-conversation silently falls back to it too. Model is configurable via
+`CHAT_MODEL` (default `claude-opus-5`).
+
+## Double-booking protection (calendar)
+Three layers keep a filled slot unbookable: (1) the scheduler only renders
+slots that are free after subtracting booked estimates and Google busy times;
+(2) the server rejects any submission whose slot is already booked in-app
+(409); (3) at the moment of booking, the server **re-checks Google Calendar
+freeBusy** for that exact window, so an event that landed on your calendar
+after the page loaded still blocks the booking. If Google is unreachable the
+check fails open (bookings continue, guarded by layers 1–2) rather than
+letting an outage stop new business.
 
 ## Still to wire (next round)
 - The digital **proposal** page is currently a representative template; next step
