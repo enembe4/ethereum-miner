@@ -25,6 +25,8 @@ const bcrypt = require('bcryptjs');
 const { all, get, run, now, token, code6 } = require('./lib/db');
 const { estimateForLead, computeMargin } = require('./lib/pricing');
 const { notifyOwner, sendMail } = require('./lib/mailer');
+const calendar = require('./lib/calendar');
+const automations = require('./lib/automations');
 const seed = require('./lib/seed');
 
 const app = express();
@@ -114,9 +116,50 @@ app.post('/api/quote', (req, res) => {
 app.post('/api/appointments', (req, res) => {
   const d = req.body || {};
   if (!d.name || !d.phone || !d.email) return res.status(400).json({ error: 'Name, phone, and email are required.' });
+  if (d.appt_date && d.appt_time) {
+    const clash = get("SELECT 1 FROM leads WHERE appt_date = ? AND appt_time = ? AND stage != 'Lost'", d.appt_date, d.appt_time);
+    if (clash) return res.status(409).json({ error: 'That time was just taken — please pick another slot.' });
+  }
   const lead = createLead({ ...d, stage: 'Scheduled' }, 'schedule');
   if (d.appt_date) logActivity(lead.id, 'appointment', `Estimate booked: ${d.appt_type || 'visit'} on ${d.appt_date} ${d.appt_time || ''}`);
+  calendar.createEvent(lead).then((eid) => {
+    if (eid) { run('UPDATE leads SET gcal_event_id = ? WHERE id = ?', eid, lead.id); logActivity(lead.id, 'calendar', 'Synced to Google Calendar'); }
+  }).catch((e) => console.error('[calendar]', e.message));
   res.json({ ok: true, reference: lead.id });
+});
+
+/* Real availability for the public scheduler: business hours Mon–Sat, minus
+   booked estimates, minus Google Calendar busy times (once connected). */
+const SLOT_LABELS = Object.keys(calendar.SLOTS);
+const ymdLocal = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+
+function slotIsBusy(busy, iso, label) {
+  if (!busy.length) return false;
+  const start = new Date(`${iso}T${calendar.SLOTS[label]}:00`);
+  const end = new Date(start.getTime() + calendar.APPT_MIN * 60000);
+  return busy.some((b) => new Date(b.start) < end && new Date(b.end) > start);
+}
+
+app.get('/api/availability', async (_req, res) => {
+  const from = new Date(Date.now() + 86400000); from.setHours(0, 0, 0, 0); // bookable from tomorrow
+  const to = new Date(from.getTime() + 45 * 86400000);
+  const taken = new Set(
+    all("SELECT appt_date, appt_time FROM leads WHERE appt_date IS NOT NULL AND stage != 'Lost'")
+      .map((b) => b.appt_date + '|' + b.appt_time),
+  );
+  let busy = [];
+  try { busy = await calendar.busyWindows(from.toISOString(), to.toISOString()); }
+  catch (e) { console.error('[calendar]', e.message); }
+
+  const days = {};
+  for (let t = from.getTime(); t < to.getTime(); t += 86400000) {
+    const d = new Date(t);
+    if (d.getDay() === 0) continue; // closed Sundays
+    const iso = ymdLocal(d);
+    const free = SLOT_LABELS.filter((s) => !taken.has(iso + '|' + s) && !slotIsBusy(busy, iso, s));
+    if (free.length) days[iso] = free;
+  }
+  res.json({ days, timezone: calendar.TZ });
 });
 
 app.post('/api/chat', (req, res) => {
@@ -275,7 +318,14 @@ app.patch('/api/admin/leads/:id', requireApiAuth, (req, res) => {
     run(`UPDATE leads SET ${updates.join(', ')}, updated_at = ? WHERE id = ?`, ...vals, now(), l.id);
   }
   if (req.body.stage && req.body.stage !== l.stage) logActivity(l.id, 'stage', `Stage → ${req.body.stage}`);
-  res.json({ lead: withMargin(get('SELECT * FROM leads WHERE id = ?', l.id)) });
+  const updated = get('SELECT * FROM leads WHERE id = ?', l.id);
+  // reschedule in admin → move the Google Calendar event too
+  if (updated.appt_date && ['appt_date', 'appt_time', 'appt_type'].some((k) => k in req.body)) {
+    calendar.updateEvent(updated).then((eid) => {
+      if (eid && eid !== updated.gcal_event_id) run('UPDATE leads SET gcal_event_id = ? WHERE id = ?', eid, updated.id);
+    }).catch((e) => console.error('[calendar]', e.message));
+  }
+  res.json({ lead: withMargin(updated) });
 });
 
 app.post('/api/admin/leads/:id/activity', requireApiAuth, (req, res) => {
@@ -311,6 +361,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.listen(PORT, () => {
   seed.seedIfEmpty();
+  automations.start();
   console.log(`\n▸ Nassau Painting site running:  http://localhost:${PORT}`);
   console.log(`▸ Admin (login required):        http://localhost:${PORT}/admin   [${ADMIN_USERNAME} / ${process.env.ADMIN_PASSWORD ? '••••••' : 'paint123 (default)'}]`);
 });

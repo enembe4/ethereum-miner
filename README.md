@@ -58,6 +58,8 @@ lib/
   db.js                node:sqlite schema + query helpers
   pricing.js           estimate + margin math (source of truth; mirrored client-side)
   mailer.js            notifications (nodemailer; log-only until SMTP set)
+  calendar.js          Google Calendar sync (log-only until GOOGLE_* set)
+  automations.js       hourly engine: reminders, stale-lead nudges, review asks
   seed.js              demo data on first run
 public/                the public website (served at /)
   *.html               pages
@@ -83,6 +85,23 @@ cost/margin, and never a price before you've sent the quote).
 | `OWNER_EMAIL` | Where new-lead / new-review alerts go (TBD) |
 | `SMTP_*` | Outbound email; blank = log-only mode (alerts + portal codes print to console) |
 | `ANTHROPIC_API_KEY` | Optional — hook to upgrade the chat assistant to Claude later |
+
+## Calendar & automations
+
+**Google Calendar sync** — booked estimates are pushed to your Google Calendar
+(with the customer's details and a link back to the lead), rescheduling in Admin
+moves the event, and the public scheduler only offers slots that are actually
+free: business hours Mon–Sat, minus already-booked estimates, minus your Google
+busy times. Double-booking is rejected server-side. Runs in log-only mode until
+the `GOOGLE_*` vars are set — the 5-minute setup is documented in `.env.example`.
+
+**Automation engine** (`lib/automations.js`, runs hourly; each rule fires once
+per lead, tracked in `automation_log`, so restarts never double-send):
+- Appointment **reminder email** to the customer the day before their visit
+- **Stale-lead nudge** to you when a New Lead sits uncontacted for 3+ days
+- **Review request** email when a job is marked Completed
+
+All of it honors the mailer's log-only mode until SMTP is configured.
 
 ## Guided chat → AI (hook)
 The chat widget runs a scripted qualifying flow and files a lead. The `reply()`

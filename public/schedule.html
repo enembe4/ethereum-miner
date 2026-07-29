@@ -51,28 +51,18 @@
         <!-- calendar -->
         <div>
           <div class="badge-row" style="justify-content:space-between;margin-bottom:10px;">
-            <button class="btn btn--sm btn--plain">←</button>
-            <strong>August 2026</strong>
-            <button class="btn btn--sm btn--plain">→</button>
+            <button class="btn btn--sm btn--plain" id="calPrev" type="button">←</button>
+            <strong id="calTitle">Loading…</strong>
+            <button class="btn btn--sm btn--plain" id="calNext" type="button">→</button>
           </div>
-          <div class="cal" id="cal">
-            <div class="dow">S</div><div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div>
-            <div class="day is-muted"></div><div class="day is-muted"></div><div class="day is-muted"></div><div class="day is-muted"></div><div class="day is-muted"></div><div class="day is-muted"></div><div class="day">1</div>
-            <div class="day is-muted">2</div><div class="day">3</div><div class="day">4</div><div class="day">5</div><div class="day">6</div><div class="day">7</div><div class="day is-muted">8</div>
-            <div class="day is-muted">9</div><div class="day">10</div><div class="day">11</div><div class="day is-on">12</div><div class="day">13</div><div class="day">14</div><div class="day is-muted">15</div>
-            <div class="day is-muted">16</div><div class="day">17</div><div class="day">18</div><div class="day">19</div><div class="day">20</div><div class="day">21</div><div class="day is-muted">22</div>
-            <div class="day is-muted">23</div><div class="day">24</div><div class="day">25</div><div class="day">26</div><div class="day">27</div><div class="day">28</div><div class="day is-muted">29</div>
-          </div>
-          <p style="margin-top:8px;"><small class="muted">Grayed dates are booked or outside service hours.</small></p>
+          <div class="cal" id="cal"></div>
+          <p style="margin-top:8px;"><small class="muted">Grayed dates are fully booked or outside service hours (closed Sundays).</small></p>
         </div>
 
         <!-- slots -->
         <div>
-          <strong style="display:block;margin-bottom:10px;">Tue, Aug 12 — available times</strong>
-          <div class="slots" id="slots">
-            <div class="slot">8:00a</div><div class="slot is-on">9:30a</div><div class="slot">11:00a</div>
-            <div class="slot">1:00p</div><div class="slot">2:30p</div><div class="slot">4:00p</div>
-          </div>
+          <strong style="display:block;margin-bottom:10px;" id="slotTitle">Pick a date</strong>
+          <div class="slots" id="slots"></div>
           <div class="field" style="margin-top:16px;">
             <label>Property address (Nassau County)</label>
             <input class="input" id="s_address" placeholder="123 Maple St, Garden City, NY 11530">
@@ -85,7 +75,7 @@
         </div>
       </div>
 
-      <button class="btn btn--block btn--lg" id="confirmBtn">Confirm — Tue, Aug 12 · 9:30 AM</button>
+      <button class="btn btn--block btn--lg" id="confirmBtn" disabled>Pick a date &amp; time</button>
       <div id="schedErr" class="tag tag--bad" style="display:none;margin-top:12px;"></div>
       <p style="margin-top:10px;text-align:center;"><small class="muted">You'll get a confirmation + reminder by text/email. Reschedule anytime.</small></p>
       <div class="note note--inline"><strong>Feeds the pipeline:</strong> a booked estimate creates a lead in Admin at the <em>Scheduled</em> stage with the appointment attached.</div>
@@ -112,31 +102,87 @@
 <script src="js/chat.js"></script>
 <script>
 (function(){
-  var cal=document.getElementById('cal'), slots=document.getElementById('slots');
-  var selDay='12', selSlot='9:30a';
-  if(cal) cal.addEventListener('click',function(e){var d=e.target.closest('.day');if(!d||d.classList.contains('is-muted')||!d.textContent.trim())return;
-    cal.querySelectorAll('.day').forEach(function(x){x.classList.remove('is-on')});d.classList.add('is-on');selDay=d.textContent.trim();});
-  if(slots) slots.addEventListener('click',function(e){var s=e.target.closest('.slot');if(!s)return;
-    slots.querySelectorAll('.slot').forEach(function(x){x.classList.remove('is-on')});s.classList.add('is-on');selSlot=s.textContent.trim();});
+  /* Live scheduler: renders real availability from /api/availability
+     (business hours minus booked estimates minus Google busy times). */
+  var days={}, view=null, selDate=null, selSlot=null;
+  var $=function(id){return document.getElementById(id)};
+  var cal=$('cal'), title=$('calTitle'), slots=$('slots'), slotTitle=$('slotTitle'), btn=$('confirmBtn');
+
+  function ym(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+  function fmt(iso){return new Date(iso+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
+
+  function loadAvailability(){
+    return fetch('/api/availability').then(function(r){return r.json()}).then(function(d){
+      days=d.days||{};
+      var first=Object.keys(days).sort()[0];
+      view=first?new Date(first+'T12:00:00'):new Date();
+      view.setDate(1);
+      if(first){selDate=first;selSlot=days[first][0]||null;}
+      render();
+    });
+  }
+
+  function render(){
+    title.textContent=view.toLocaleString('en-US',{month:'long',year:'numeric'});
+    var html='<div class="dow">S</div><div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div>';
+    var firstDow=new Date(view.getFullYear(),view.getMonth(),1).getDay();
+    var nDays=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+    for(var i=0;i<firstDow;i++) html+='<div class="day is-muted"></div>';
+    for(var d=1;d<=nDays;d++){
+      var iso=ym(view)+'-'+String(d).padStart(2,'0');
+      var open=!!days[iso];
+      html+='<div class="day'+(open?'':' is-muted')+(iso===selDate?' is-on':'')+'"'+(open?' data-iso="'+iso+'"':'')+'>'+d+'</div>';
+    }
+    cal.innerHTML=html;
+    renderSlots();
+  }
+
+  function renderSlots(){
+    if(!selDate){slotTitle.textContent='Pick a date';slots.innerHTML='';btn.disabled=true;btn.textContent='Pick a date & time';return;}
+    slotTitle.textContent=fmt(selDate)+' — available times';
+    slots.innerHTML=(days[selDate]||[]).map(function(s){
+      return '<div class="slot'+(s===selSlot?' is-on':'')+'" data-slot="'+s+'">'+s+'</div>';
+    }).join('');
+    btn.disabled=!(selDate&&selSlot);
+    btn.textContent=(selDate&&selSlot)?('Confirm — '+fmt(selDate)+' · '+selSlot):'Pick a date & time';
+  }
+
+  cal.addEventListener('click',function(e){var d=e.target.closest('.day');if(!d||!d.dataset.iso)return;
+    selDate=d.dataset.iso;selSlot=(days[selDate]||[])[0]||null;render();});
+  slots.addEventListener('click',function(e){var s=e.target.closest('.slot');if(!s)return;selSlot=s.dataset.slot;renderSlots();});
+  $('calPrev').addEventListener('click',function(){view.setMonth(view.getMonth()-1);render();});
+  $('calNext').addEventListener('click',function(){view.setMonth(view.getMonth()+1);render();});
+
+  // chip groups on this page (estimate type)
+  document.querySelectorAll('.chips').forEach(function(g){
+    g.addEventListener('click',function(e){var c=e.target.closest('.chip');if(!c)return;
+      if(g.hasAttribute('data-single')){g.querySelectorAll('.chip').forEach(function(x){x.classList.remove('is-on')});c.classList.add('is-on');}
+      else c.classList.toggle('is-on');});
+  });
 
   function chipVal(field){var g=document.querySelector('[data-field="'+field+'"]');var on=g&&g.querySelector('.chip.is-on');return on?on.textContent.trim():null;}
-  function v(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+  function v(id){var el=$(id);return el?el.value.trim():'';}
 
-  document.getElementById('confirmBtn').addEventListener('click',async function(){
-    var err=document.getElementById('schedErr'); err.style.display='none';
+  btn.addEventListener('click',async function(){
+    var err=$('schedErr'); err.style.display='none';
     var body={name:v('s_name'),phone:v('s_phone'),email:v('s_email'),address:v('s_address'),
-      appt_type:chipVal('appt_type'),appt_date:'2026-08-'+String(selDay).padStart(2,'0'),appt_time:selSlot};
+      appt_type:chipVal('appt_type'),appt_date:selDate,appt_time:selSlot};
     if(!body.name||!body.phone||!body.email){err.textContent='Please add your name, phone, and email.';err.style.display='inline-block';return;}
-    this.disabled=true;this.textContent='Booking…';
+    btn.disabled=true;btn.textContent='Booking…';
     try{
       var r=await fetch('/api/appointments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
       var d=await r.json(); if(!r.ok) throw new Error(d.error||'Error');
-      document.querySelector('#confirmBtn').closest('.card').hidden=true;
-      var done=document.getElementById('schedDone'); done.hidden=false;
-      document.getElementById('schedSummary').textContent=(body.appt_type||'Estimate')+' on Aug '+selDay+', 2026 at '+selSlot;
-      if(d.reference) document.getElementById('schedRef').textContent='Reference #'+d.reference;
-    }catch(ex){err.textContent=ex.message;err.style.display='inline-block';this.disabled=false;this.textContent='Confirm booking';}
+      btn.closest('.card').hidden=true;
+      var done=$('schedDone'); done.hidden=false;
+      $('schedSummary').textContent=(body.appt_type||'Estimate')+' on '+fmt(selDate)+' at '+selSlot;
+      if(d.reference) $('schedRef').textContent='Reference #'+d.reference;
+    }catch(ex){
+      err.textContent=ex.message;err.style.display='inline-block';
+      await loadAvailability(); // the slot may have just been taken — refresh
+    }
   });
+
+  loadAvailability();
 })();
 </script>
 </body>
