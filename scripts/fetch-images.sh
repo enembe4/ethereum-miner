@@ -35,7 +35,7 @@ declare -A IMGS=(
   [wallpaper-team]=7218011       # two sets of hands rolling a wall
   [color-swatches]=1573825       # fanned color swatches
   [commercial-lift]=32115287     # exterior painting from a lift
-  [team-handshake]=7578892       # contractor/homeowner handshake
+  # team photo intentionally omitted — the owner will supply a real crew photo
 )
 
 echo "Downloading $(( ${#IMGS[@]} )) images…"
