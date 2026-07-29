@@ -125,7 +125,11 @@ small { color: var(--ink-faint); }
   font: 600 .78rem/1.4 var(--mono);
   text-align: center; padding: 12px;
   min-height: 120px;
+  position: relative; overflow: hidden;
 }
+/* a real photo dropped inside a placeholder covers it; if the image fails
+   to load it removes itself (onerror) and the label shows again */
+.ph > img.photo { position: absolute; inset: 0; height: 100%; border: 0; border-radius: 0; max-height: none; background: transparent; }
 .ph--hero  { min-height: 380px; }
 .ph--wide  { aspect-ratio: 16/9; }
 .ph--sq    { aspect-ratio: 1/1; }

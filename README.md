@@ -103,6 +103,19 @@ per lead, tracked in `automation_log`, so restarts never double-send):
 
 All of it honors the mailer's log-only mode until SMTP is configured.
 
+## Stock photography
+The public pages carry curated stock photos matching the brand direction —
+warm, familial, classic colonial / Cape Cod homes, tree-lined Northeast
+streets, bright airy interiors. All are from **Pexels** (license: free for
+commercial use, no attribution — https://www.pexels.com/license/). They are
+hot-linked from the Pexels CDN so they work immediately; each one degrades to
+its labeled placeholder if it ever fails to load. Before production launch run
+`bash scripts/fetch-images.sh` (any machine with normal internet) to download
+them into `public/assets/` and rewrite pages to the self-hosted copies. Each
+photo's review page is `https://www.pexels.com/photo/x-{id}/` using the id
+from the script. Swap in your own project photos as you collect them — that's
+the end state; the stock set is the launch look.
+
 ## AI chat assistant
 With `ANTHROPIC_API_KEY` set in `.env`, the website chat is a real Claude
 assistant (`lib/chatai.js`): it answers questions about services, the service
