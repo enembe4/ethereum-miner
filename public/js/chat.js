@@ -10,29 +10,34 @@
   if (window.__npcChat) return; window.__npcChat = true;
 
   var css = `
-  .npc-fab{position:fixed;right:18px;bottom:74px;z-index:70;width:56px;height:56px;border-radius:50%;
-    background:#2f6fed;color:#fff;border:none;cursor:pointer;font-size:24px;box-shadow:0 4px 16px rgba(0,0,0,.25)}
-  @media(min-width:761px){.npc-fab{bottom:18px}}
-  .npc-panel{position:fixed;right:18px;bottom:140px;z-index:71;width:330px;max-width:calc(100vw - 36px);
-    background:#fff;border:1px solid #c9c9cf;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.22);
+  .npc-fab{position:fixed;right:20px;bottom:72px;z-index:70;width:52px;height:52px;border-radius:0;
+    background:#26282b;color:#f7f4ee;border:1px solid #26282b;cursor:pointer;font:600 .62rem/1 inherit;letter-spacing:.14em;text-transform:uppercase}
+  .npc-fab:hover{background:#3d4c5c;border-color:#3d4c5c}
+  @media(min-width:761px){.npc-fab{bottom:20px}}
+  .npc-panel{position:fixed;right:20px;bottom:136px;z-index:71;width:340px;max-width:calc(100vw - 40px);
+    background:#fff;border:1px solid #26282b;border-radius:0;
     display:none;flex-direction:column;overflow:hidden;font-family:inherit}
   @media(min-width:761px){.npc-panel{bottom:84px}}
   .npc-panel.open{display:flex}
-  .npc-head{background:#1d1d1f;color:#fff;padding:12px 14px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
-  .npc-head small{color:#9fe6b0;font-weight:400;display:block;font-size:.72rem}
-  .npc-body{padding:12px;height:300px;overflow-y:auto;background:#f4f4f6;display:flex;flex-direction:column;gap:8px}
-  .npc-msg{max-width:82%;padding:8px 11px;border-radius:12px;font-size:.9rem;line-height:1.35;white-space:pre-wrap}
-  .npc-bot{background:#fff;border:1px solid #e3e3e7;align-self:flex-start;border-bottom-left-radius:3px}
-  .npc-me{background:#2f6fed;color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
+  .npc-head{background:#26282b;color:#fff;padding:14px 16px;font-weight:600;font-size:.9rem;display:flex;justify-content:space-between;align-items:center}
+  .npc-head small{color:#a8552f;font-weight:500;display:block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}
+  .npc-body{padding:14px;height:300px;overflow-y:auto;background:#f7f4ee;display:flex;flex-direction:column;gap:8px}
+  .npc-msg{max-width:84%;padding:9px 12px;border-radius:0;font-size:.9rem;line-height:1.45;white-space:pre-wrap}
+  .npc-bot{background:#fff;border:1px solid #ddd7ca;align-self:flex-start}
+  .npc-me{background:#3d4c5c;color:#fff;align-self:flex-end}
   .npc-typing{opacity:.6;font-style:italic}
-  .npc-foot{display:flex;gap:6px;padding:10px;border-top:1px solid #e3e3e7;background:#fff}
-  .npc-foot input{flex:1;padding:9px 11px;border:1px solid #c9c9cf;border-radius:8px;font:inherit}
-  .npc-foot button{padding:9px 13px;border:none;border-radius:8px;background:#2f6fed;color:#fff;cursor:pointer}
+  .npc-foot{display:flex;gap:8px;padding:12px;border-top:1px solid #ddd7ca;background:#fff}
+  .npc-foot input{flex:1;padding:10px 12px;border:1px solid #ddd7ca;border-radius:0;font:inherit;font-size:.9rem}
+  .npc-foot input:focus{outline:none;border-color:#26282b}
+  .npc-foot button{padding:10px 16px;border:1px solid #26282b;border-radius:0;background:#26282b;color:#fff;cursor:pointer;
+    font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+  .npc-foot button:hover{background:#3d4c5c;border-color:#3d4c5c}
   .npc-quick{display:flex;flex-wrap:wrap;gap:6px}
-  .npc-quick button{background:#eef3fe;border:1px solid #cddcff;color:#2f6fed;border-radius:100px;padding:6px 11px;font-size:.82rem;cursor:pointer}`;
+  .npc-quick button{background:#fff;border:1px solid #ddd7ca;color:#26282b;border-radius:0;padding:7px 12px;font-size:.8rem;cursor:pointer}
+  .npc-quick button:hover{border-color:#26282b}`;
   var style = document.createElement('style'); style.textContent = css; document.head.appendChild(style);
 
-  var fab = el('button', 'npc-fab', '💬'); fab.setAttribute('aria-label', 'Chat with us');
+  var fab = el('button', 'npc-fab', 'Chat'); fab.setAttribute('aria-label', 'Chat with us');
   var panel = el('div', 'npc-panel');
   panel.innerHTML =
     '<div class="npc-head"><div>Chat with us <small>Typically replies in seconds</small></div>' +
@@ -119,7 +124,7 @@
           .then(function (d) { mode = d.ai ? 'ai' : 'scripted'; })
           .catch(function () { mode = 'scripted'; });
       }
-      bot('Hi! 👋 What can we help you paint?', ['Interior', 'Exterior', 'Cabinets', 'Get a quote']);
+      bot('What can we help you paint?', ['Interior', 'Exterior', 'Cabinets', 'Get a quote']);
     }
     input.focus();
   }

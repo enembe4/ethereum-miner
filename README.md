@@ -143,7 +143,13 @@ letting an outage stop new business.
 - Notification email recipient + SMTP credentials.
 - Production hardening: persistent session store, HTTPS, real photo uploads.
 
-## Wireframe note
-Pages still carry a dark "◧ Wireframe" dev banner (with quick links to every
-screen, including the login-gated admin). It's a development aid and is removed
-for production; the customer-facing navigation never links to the admin.
+## Design system
+The public site and admin share one stylesheet, `public/css/site.css` — the
+"Chalk & Railings" system: warm chalky neutrals (#F7F4EE / #EFEAE0), soft
+blue-black ink (#26282B), hairline borders, sharp corners everywhere (no
+rounded buttons, no shadows), Libre Caslon display type over Hanken Grotesk,
+and a single harbor slate-navy accent (#3D4C5C) with cedar-rust stars.
+Reference points: Farrow & Ball's heritage-paint palette, Kinfolk/Cereal
+editorial typography, Aesop's tonal sections and square buttons. The old
+wireframe dev banners and annotation notes have been removed from public
+pages; the customer-facing navigation never links to the admin.

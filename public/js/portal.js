@@ -45,11 +45,11 @@
         ';border-top:3px solid ' + color + ';padding-top:8px;font-weight:600">' + esc(s) + '</div>';
     }).join('');
 
-    var appt = p.appt ? '<div class="card"><strong>📅 Your estimate appointment</strong><p style="margin:6px 0 0">' +
+    var appt = p.appt ? '<div class="card"><strong>Your estimate appointment</strong><p style="margin:6px 0 0">' +
       esc(p.appt.type || 'Visit') + ' · ' + esc(p.appt.date) + ' ' + esc(p.appt.time || '') + '</p></div>' : '';
 
-    var quote = p.price ? '<div class="card" style="background:var(--accent-2);border-color:#cddcff"><strong>Your quote is ready</strong>' +
-      '<p style="font-size:1.6rem;font-weight:750;margin:6px 0">' + money(p.price) + '</p>' +
+    var quote = p.price ? '<div class="card" style="background:var(--accent-2);border-color:var(--line)"><strong>Your quote is ready</strong>' +
+      '<p style="font-size:1.6rem;font-family:var(--display);font-weight:600;margin:6px 0">' + money(p.price) + '</p>' +
       (p.proposalToken ? '<a class="btn" href="proposal.html">Review &amp; accept proposal →</a>' : '') + '</div>'
       : '<div class="card"><strong>Estimate in progress</strong><p style="margin:6px 0 0" class="muted">We\'re preparing your quote and will notify you here and by ' +
         'phone/email. Nothing to do yet!</p></div>';
