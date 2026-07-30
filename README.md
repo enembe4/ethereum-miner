@@ -145,11 +145,47 @@ letting an outage stop new business.
 
 ## Design system
 The public site and admin share one stylesheet, `public/css/site.css` — the
-"Chalk & Railings" system: warm chalky neutrals (#F7F4EE / #EFEAE0), soft
-blue-black ink (#26282B), hairline borders, sharp corners everywhere (no
-rounded buttons, no shadows), Libre Caslon display type over Hanken Grotesk,
-and a single harbor slate-navy accent (#3D4C5C) with cedar-rust stars.
-Reference points: Farrow & Ball's heritage-paint palette, Kinfolk/Cereal
-editorial typography, Aesop's tonal sections and square buttons. The old
-wireframe dev banners and annotation notes have been removed from public
-pages; the customer-facing navigation never links to the admin.
+**"Gallery"** system, drawn from the Restoration Hardware sourcebook. Six rules
+carry the whole thing:
+
+1. **One typeface.** Jost (a geometric sans) at weights 200–500. Weight, size
+   and tracking do all the work; Cormorant Garamond appears only in pull quotes.
+2. **No colour.** Warm neutral greys and black — `#1A1A1A` ink on `#FFFFFF`,
+   banded with `#FAF9F7` and `#F2F0EC`. There is deliberately **no brand accent**:
+   action is black. (`--good/--warn/--bad` exist for admin state only.)
+3. **Tiny widely-tracked caps for structure, large light type for voice.** Labels,
+   buttons, nav and captions are ~10px uppercase at `.18em`–`.24em`; headlines are
+   200-weight and large. Nothing sits in between.
+4. **Photography runs edge to edge and is never framed.** No borders, no radius —
+   `.split` puts a full-bleed image against a half-width column of copy.
+5. **No fills but black.** Buttons are hairline rectangles; the primary fills
+   black and inverts on hover. Cards are unframed by default (`.card--framed`
+   opts back in for forms and data).
+6. **Whitespace is the loudest element** — 118px section padding, 620px+ image
+   halves, and tonal bands instead of rules to separate sections.
+
+Square corners everywhere, no shadows, no emoji, no decorative icons, and no
+directional arrows in labels. The customer-facing navigation never links to the
+admin.
+
+**Fonts are self-hosted.** `scripts/fetch-fonts.sh` downloads the woff2 files
+into `public/assets/fonts/` and generates `public/css/fonts.css`, which
+`site.css` imports — so there is no Google Fonts dependency at runtime. Re-run it
+after changing the `FAMILIES` line in that script.
+
+## Clickable demo (`demo/index.html`)
+A single self-contained page that simulates the entire site — every customer
+page plus the owner admin — with no server, no database and no network access.
+Open it directly in a browser, or publish it as a link for people to click
+through. Both webfonts and the chat widget's stylesheet are inlined, so it works
+offline and under a strict CSP.
+
+It is generated from the real design system, so it can't drift:
+
+```bash
+python3 scripts/build-demo.py     # re-inlines site.css + chat.js CSS + fonts
+```
+
+That regenerates only the page's `<style>` block; the markup and simulation
+script are left alone. Edit `public/css/site.css`, re-run it, and the demo
+matches the site again.

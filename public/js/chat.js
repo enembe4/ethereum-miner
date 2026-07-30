@@ -9,32 +9,39 @@
 (function () {
   if (window.__npcChat) return; window.__npcChat = true;
 
+  /* Matches the "Gallery" system in css/site.css: monochrome neutrals,
+     square corners, tiny widely-tracked caps, no fills but black. */
   var css = `
-  .npc-fab{position:fixed;right:20px;bottom:72px;z-index:70;width:52px;height:52px;border-radius:0;
-    background:#26282b;color:#f7f4ee;border:1px solid #26282b;cursor:pointer;font:600 .62rem/1 inherit;letter-spacing:.14em;text-transform:uppercase}
-  .npc-fab:hover{background:#3d4c5c;border-color:#3d4c5c}
-  @media(min-width:761px){.npc-fab{bottom:20px}}
-  .npc-panel{position:fixed;right:20px;bottom:136px;z-index:71;width:340px;max-width:calc(100vw - 40px);
-    background:#fff;border:1px solid #26282b;border-radius:0;
+  .npc-fab{position:fixed;right:26px;bottom:74px;z-index:70;padding:14px 20px;border-radius:0;
+    background:#1a1a1a;color:#fff;border:1px solid #1a1a1a;cursor:pointer;
+    font:500 .62rem/1 inherit;letter-spacing:.18em;text-transform:uppercase}
+  .npc-fab:hover{background:transparent;color:#1a1a1a}
+  @media(min-width:761px){.npc-fab{bottom:26px}}
+  .npc-panel{position:fixed;right:26px;bottom:132px;z-index:71;width:352px;max-width:calc(100vw - 52px);
+    background:#fff;border:1px solid #1a1a1a;border-radius:0;
     display:none;flex-direction:column;overflow:hidden;font-family:inherit}
-  @media(min-width:761px){.npc-panel{bottom:84px}}
+  @media(min-width:761px){.npc-panel{bottom:86px}}
   .npc-panel.open{display:flex}
-  .npc-head{background:#26282b;color:#fff;padding:14px 16px;font-weight:600;font-size:.9rem;display:flex;justify-content:space-between;align-items:center}
-  .npc-head small{color:#a8552f;font-weight:500;display:block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}
-  .npc-body{padding:14px;height:300px;overflow-y:auto;background:#f7f4ee;display:flex;flex-direction:column;gap:8px}
-  .npc-msg{max-width:84%;padding:9px 12px;border-radius:0;font-size:.9rem;line-height:1.45;white-space:pre-wrap}
-  .npc-bot{background:#fff;border:1px solid #ddd7ca;align-self:flex-start}
-  .npc-me{background:#3d4c5c;color:#fff;align-self:flex-end}
-  .npc-typing{opacity:.6;font-style:italic}
-  .npc-foot{display:flex;gap:8px;padding:12px;border-top:1px solid #ddd7ca;background:#fff}
-  .npc-foot input{flex:1;padding:10px 12px;border:1px solid #ddd7ca;border-radius:0;font:inherit;font-size:.9rem}
-  .npc-foot input:focus{outline:none;border-color:#26282b}
-  .npc-foot button{padding:10px 16px;border:1px solid #26282b;border-radius:0;background:#26282b;color:#fff;cursor:pointer;
-    font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
-  .npc-foot button:hover{background:#3d4c5c;border-color:#3d4c5c}
-  .npc-quick{display:flex;flex-wrap:wrap;gap:6px}
-  .npc-quick button{background:#fff;border:1px solid #ddd7ca;color:#26282b;border-radius:0;padding:7px 12px;font-size:.8rem;cursor:pointer}
-  .npc-quick button:hover{border-color:#26282b}`;
+  .npc-head{background:#1a1a1a;color:#fff;padding:17px 18px;display:flex;justify-content:space-between;align-items:center;
+    font:500 .66rem/1.2 inherit;letter-spacing:.18em;text-transform:uppercase}
+  .npc-head small{color:rgba(255,255,255,.6);display:block;margin-top:6px;
+    font-size:.58rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase}
+  .npc-body{padding:18px;height:308px;overflow-y:auto;background:#faf9f7;display:flex;flex-direction:column;gap:10px}
+  .npc-msg{max-width:86%;padding:11px 14px;border-radius:0;font-size:.9rem;line-height:1.55;white-space:pre-wrap}
+  .npc-bot{background:#fff;border:1px solid #e2dfda;color:#4a4744;align-self:flex-start}
+  .npc-me{background:#1a1a1a;color:#fff;align-self:flex-end}
+  .npc-typing{opacity:.5;font-style:italic}
+  .npc-foot{display:flex;gap:10px;padding:14px 18px;border-top:1px solid #e2dfda;background:#fff;align-items:center}
+  .npc-foot input{flex:1;padding:10px 0;border:0;border-bottom:1px solid #e2dfda;border-radius:0;
+    font:inherit;font-size:.9rem;color:#1a1a1a;background:transparent}
+  .npc-foot input:focus{outline:none;border-bottom-color:#1a1a1a}
+  .npc-foot button{padding:11px 18px;border:1px solid #1a1a1a;border-radius:0;background:#1a1a1a;color:#fff;cursor:pointer;
+    font:500 .6rem/1 inherit;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap}
+  .npc-foot button:hover{background:transparent;color:#1a1a1a}
+  .npc-quick{display:flex;flex-wrap:wrap;gap:8px}
+  .npc-quick button{background:transparent;border:1px solid #e2dfda;color:#4a4744;border-radius:0;padding:9px 14px;
+    font:500 .58rem/1 inherit;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+  .npc-quick button:hover{border-color:#1a1a1a;color:#1a1a1a}`;
   var style = document.createElement('style'); style.textContent = css; document.head.appendChild(style);
 
   var fab = el('button', 'npc-fab', 'Chat'); fab.setAttribute('aria-label', 'Chat with us');
