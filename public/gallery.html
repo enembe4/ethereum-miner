@@ -43,16 +43,17 @@
 
 <section class="section" style="padding-top:8px;">
   <div class="wrap">
-    <!-- Featured before/after -->
-    <div class="card" style="margin-bottom:22px;">
-      <span class="tag tag--accent">Before / After</span>
-      <div class="ph ph--wide" style="margin-top:12px;position:relative;">
-        <span class="ph__label">INTERACTIVE BEFORE / AFTER SLIDER<br>drag handle to reveal ◀ ▶</span>
-        <div style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:var(--accent);"></div>
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:.8rem;">↔</div>
+    <!-- Featured before/after — drag anywhere on the image -->
+    <figure class="plate" style="margin-bottom:40px;">
+      <div class="ba ba--frame" data-ba>
+        <div class="ba__after"><img src="https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600" alt="Colonial exterior after repainting" loading="lazy" onerror="this.closest('figure').remove()"></div>
+        <div class="ba__before"><img src="https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600" alt="" loading="lazy"></div>
+        <div class="ba__handle" role="slider" tabindex="0" aria-label="Compare before and after" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
+        <span class="ba__tag ba__tag--b">Before</span>
+        <span class="ba__tag ba__tag--a">After</span>
       </div>
-      <p class="muted" style="margin-top:10px;font-size:.9rem;">Colonial exterior · Massapequa · full prep + 2 coats</p>
-    </div>
+      <figcaption>Colonial Exterior — Massapequa<small>Full prep · two coats · representative comparison</small></figcaption>
+    </figure>
 
     <!-- masonry-ish grid -->
     <div class="grid grid-4">
@@ -92,6 +93,7 @@
   <a href="tel:+15165550100">Call (516) 555-0100</a>
   <a href="quote.html" class="callbar__cta">Get a Free Quote</a>
 </div>
+<script src="js/site.js"></script>
 <script src="js/chat.js"></script>
 </body>
 </html>

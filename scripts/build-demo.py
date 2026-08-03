@@ -141,7 +141,15 @@ def main():
         sys.exit('no <style> block found in demo/index.html')
     style = ('<style>\n' + font_block() + '\n' + site_css() + '\n'
              + chat_css() + '\n' + DEMO_CSS + '\n</style>')
-    TARGET.write_text(page[:m.start()] + style + page[m.end():], encoding='utf-8')
+    page = page[:m.start()] + style + page[m.end():]
+    # Sync the visualizer engine verbatim from the real site so the demo's
+    # paint tool is the same code customers get.
+    engine = (ROOT / 'public' / 'js' / 'visualizer.js').read_text(encoding='utf-8')
+    page = re.sub(
+        r'(/\* VZ-ENGINE-START[^\n]*\*/\n).*?(/\* VZ-ENGINE-END \*/)',
+        lambda mm: mm.group(1) + engine + mm.group(2),
+        page, count=1, flags=re.S)
+    TARGET.write_text(page, encoding='utf-8')
     print(f'rebuilt {TARGET.relative_to(ROOT)} ({TARGET.stat().st_size // 1024}KB)')
 
 

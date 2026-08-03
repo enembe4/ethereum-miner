@@ -168,6 +168,35 @@ Square corners everywhere, no shadows, no emoji, no decorative icons, and no
 directional arrows in labels. The customer-facing navigation never links to the
 admin.
 
+### Motion & journey layer (`public/js/site.js`)
+Progressive enhancement on every public page — with JS off (or
+`prefers-reduced-motion` on) nothing is hidden or lost:
+- **Scroll reveals** — headers, grid items and claim lists rise in quietly with
+  a small sibling stagger; armed only when motion is allowed, forced visible in
+  print.
+- **Stat counters** — the trust-bar figures count up on first sight.
+- **Hero parallax** — the photograph drifts slower than the page (desktop only).
+- **Nav** — tightens once you scroll.
+- **Before/after sliders** — any `[data-ba]` block gets drag + arrow-key
+  comparison (used on the homepage gallery and the gallery's featured plate;
+  the "before" side is the same frame with a weathered filter until real
+  before/after photo pairs exist).
+- **Towns marquee** — a slow ribbon of service towns under the hero; static
+  wrap under reduced motion.
+- **Journey hand-off** — each page ends with exactly one injected next step
+  (services → visualizer → quote, financing → quote, …) so the site reads as a
+  path, not a menu.
+
+### Color Visualizer (`public/js/visualizer.js`)
+A real tool, not a mock: upload a photo (or load a sample), tap a wall, and a
+chroma-weighted flood fill finds the surface — forgiving of shadow gradients,
+strict about hue boundaries — feathers the mask, then recolors it through a
+luminance-preserving LUT so texture and lighting survive. Selections persist
+across color changes; undo/clear/download included. Everything runs client-side
+— the photo never leaves the device. "Add to my quote" stores picks in
+`localStorage` (`npc_colors`), the quote form surfaces them, and `quote.js`
+already attaches them to the lead.
+
 **Fonts are self-hosted.** `scripts/fetch-fonts.sh` downloads the woff2 files
 into `public/assets/fonts/` and generates `public/css/fonts.css`, which
 `site.css` imports — so there is no Google Fonts dependency at runtime. Re-run it
