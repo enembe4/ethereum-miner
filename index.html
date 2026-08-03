@@ -637,6 +637,10 @@ body.has-callbar { padding-bottom: 54px; }
   font: var(--caps-xs); letter-spacing: var(--track-sm); text-transform: uppercase; color: var(--ink);
 }
 .vz__side h3 { margin-bottom: 18px; }
+.vz__ai { border: 1px solid var(--line); background: var(--paper); padding: 26px; margin-top: 20px; }
+.vz__ai-row { display: flex; gap: 12px; align-items: flex-end; }
+.vz__ai-row .input { flex: 1; }
+.vz__ai-row .btn { flex: none; }
 .vz-saved {
   display: inline-flex; align-items: center; gap: 9px;
   border: 1px solid var(--line); background: var(--paper);
@@ -1206,6 +1210,31 @@ figure.swtile { margin:0; }
                  Nothing is uploaded — the preview is computed on your device.</p>
             </div>
           </div>
+        <div class="vz__ai" id="vzAiPanel" hidden>
+          <div class="eyebrow" style="margin-bottom:10px;">AI Render</div>
+          <p style="font-size:.9rem;">Name any color from any major brand — Benjamin Moore, Sherwin-Williams,
+             Behr, PPG, Farrow &amp; Ball — and we'll repaint your actual photo, photorealistically.</p>
+          <div class="vz__ai-row">
+            <input class="input" id="vzAiQuery" placeholder='Try "Benjamin Moore Hale Navy" or "SW 7069"' autocomplete="off">
+            <button class="btn btn--plain" id="vzAiResolve" type="button">Find Color</button>
+          </div>
+          <div class="chips" id="vzAiSurf" style="margin-top:14px;">
+            <span class="chip is-on" data-surf="interior walls">Walls</span>
+            <span class="chip" data-surf="exterior siding">Siding</span>
+            <span class="chip" data-surf="kitchen cabinets">Cabinets</span>
+            <span class="chip" data-surf="front door">Front Door</span>
+            <span class="chip" data-surf="trim and moldings">Trim</span>
+          </div>
+          <div class="badge-row" id="vzAiFound" hidden style="gap:14px;margin-top:16px;">
+            <span class="swatch" id="vzAiChip" style="width:40px;flex:none;cursor:default;"></span>
+            <div style="flex:1;min-width:140px;"><strong id="vzAiName"></strong><br><small class="muted" id="vzAiCode"></small></div>
+            <button class="btn" id="vzAiGo" type="button">Render My Photo</button>
+          </div>
+          <p class="vz__status" id="vzAiStatus" aria-live="polite" style="margin-top:10px;"></p>
+          <p class="hint" id="vzAiNote" hidden>AI rendering switches on once the owner connects a rendering
+             API key — the instant preview below works right now.</p>
+          <div id="vzAiResult"></div>
+        </div>
           <div class="vz__toolbar" id="vzTools" hidden>
             <p class="vz__status" id="vzStatus" aria-live="polite">Tap a wall to paint it.</p>
             <div class="badge-row" style="gap:10px;">
@@ -2065,6 +2094,105 @@ figure.swtile { margin:0; }
     say(paint.name + ' saved — it will ride along with your quote request.');
   });
   drawSaved();
+
+  /* ---------------- AI render ----------------
+     Server-backed: Claude resolves any brand color and reads the photo, a
+     dedicated image-edit model performs the repaint. The panel hides itself
+     when there is no server (static demo) and explains itself when the
+     server is up but no render key is configured. */
+  var aiPanel = $('vzAiPanel');
+  var aiState = { on: false, color: null };
+  function aiSay(msg) { var el = $('vzAiStatus'); if (el) el.textContent = msg || ''; }
+
+  if (aiPanel) (function () {
+    fetch('/api/visualizer/status').then(function (r) { return r.json(); }).then(function (st) {
+      aiPanel.hidden = false;
+      aiState.on = !!st.ai;
+      if (!st.ai) {
+        var note = $('vzAiNote'); if (note) note.hidden = false;
+        var go = $('vzAiGo'); if (go) go.disabled = true;
+      }
+    }).catch(function () { /* no backend (static demo) — panel stays hidden */ });
+
+    var q = $('vzAiQuery'), resolveBtn = $('vzAiResolve'), found = $('vzAiFound'), goBtn = $('vzAiGo');
+
+    function resolve() {
+      var text = (q.value || '').trim();
+      if (!text) { aiSay('Type a color — brand plus name or code.'); return; }
+      aiSay('Looking up "' + text + '"…');
+      fetch('/api/visualizer/resolve-color', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: text }),
+      }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (!res.ok) { aiSay(res.d.error || 'Could not find that color.'); found.hidden = true; return; }
+          var c = res.d;
+          aiState.color = c;
+          $('vzAiChip').style.background = c.hex;
+          $('vzAiName').textContent = c.name + (c.confident === false ? ' (best guess)' : '');
+          $('vzAiCode').textContent = c.brand + (c.code ? ' · ' + c.code : '') + ' · ' + c.hex;
+          found.hidden = false;
+          aiSay('');
+          // make it the active instant-preview color too
+          setPaint({ name: c.name, code: c.code || c.hex, hex: c.hex, fam: c.brand });
+        })
+        .catch(function () { aiSay('Color lookup is unavailable right now.'); });
+    }
+    if (resolveBtn) resolveBtn.addEventListener('click', resolve);
+    if (q) q.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); resolve(); } });
+
+    function aiSurface() {
+      var on = document.querySelector('#vzAiSurf .chip.is-on');
+      return on ? on.getAttribute('data-surf') : 'walls';
+    }
+    var surfWrap = $('vzAiSurf');
+    if (surfWrap) surfWrap.addEventListener('click', function (e) {
+      var chip = e.target.closest('.chip'); if (!chip) return;
+      surfWrap.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('is-on'); });
+      chip.classList.add('is-on');
+    });
+
+    if (goBtn) goBtn.addEventListener('click', function () {
+      if (!aiState.on) return;
+      if (!base) { aiSay('Load a photo first — upload above.'); return; }
+      if (!aiState.color) { aiSay('Find a color first.'); return; }
+      // send the clean base photo (not the instant-preview overlay)
+      var off = document.createElement('canvas'); off.width = W; off.height = H;
+      off.getContext('2d').putImageData(base, 0, 0);
+      var dataURL = off.toDataURL('image/jpeg', .9);
+      goBtn.disabled = true;
+      aiSay('Rendering — a studio-quality repaint takes 10–30 seconds…');
+      fetch('/api/visualizer/render', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: dataURL, color: aiState.color, surfaces: aiSurface() }),
+      }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          goBtn.disabled = false;
+          if (!res.ok) { aiSay(res.d.error || 'Rendering failed — please try again.'); return; }
+          aiSay('Done. Drag the line to compare.');
+          var wrap = $('vzAiResult');
+          wrap.innerHTML =
+            '<div class="ba ba--frame" data-ba style="margin-top:16px;">' +
+            '<div class="ba__after"><img src="' + res.d.image + '" alt="AI render — after"></div>' +
+            '<div class="ba__before" style="clip-path:inset(0 calc(100% - var(--ba)) 0 0);"><img src="' + dataURL + '" alt="Original photo" style="filter:none;"></div>' +
+            '<div class="ba__handle" role="slider" tabindex="0" aria-label="Compare original and render" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>' +
+            '<span class="ba__tag ba__tag--b">Original</span><span class="ba__tag ba__tag--a">' + aiState.color.name + '</span>' +
+            '</div>' +
+            '<div class="badge-row" style="gap:10px;margin-top:12px;">' +
+            '<a class="btn btn--sm btn--plain" id="vzAiDl" download="nassau-painting-ai-render.png">Download Render</a>' +
+            '<button class="btn btn--sm btn--plain" id="vzAiUse" type="button">Open in Instant Preview</button></div>';
+          $('vzAiDl').href = res.d.image;
+          if (window.NPCSite) window.NPCSite.initBA(wrap.querySelector('[data-ba]'));
+          $('vzAiUse').addEventListener('click', function () {
+            var img = new Image();
+            img.onload = function () { accept(img); };
+            img.src = res.d.image;
+          });
+          wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        })
+        .catch(function () { goBtn.disabled = false; aiSay('Rendering failed — please try again.'); });
+    });
+  })();
 
   /* ---------------- samples ---------------- */
   var sampWrap = $('vzSamples');
