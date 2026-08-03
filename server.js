@@ -206,6 +206,16 @@ app.post('/api/visualizer/resolve-color', async (req, res) => {
   catch (e) { res.status(e.status || 502).json({ error: e.message }); }
 });
 
+app.post('/api/visualizer/segment', async (req, res) => {
+  try {
+    const b = req.body || {};
+    res.json(await visualai.segment({ image: b.image, cols: b.cols, rows: b.rows }));
+  } catch (e) {
+    if (!e.status || e.status >= 500) console.error('[visualizer:segment]', e.message);
+    res.status(e.status || 502).json({ error: e.message });
+  }
+});
+
 app.post('/api/visualizer/render', async (req, res) => {
   try {
     const b = req.body || {};

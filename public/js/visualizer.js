@@ -58,11 +58,18 @@
   var W = 0, H = 0;
   var base = null;                 // ImageData of the untouched photo
   var luma = null;                 // Uint8Array per-pixel luminance of base
+  var grad = null;                 // Uint8Array edge strength (Sobel) — fills stop at edges
+  var tvar = null;                 // Uint8Array local texture (std dev) — fills avoid busy areas
   var mask = null;                 // Uint8Array 0..255 selection alpha
   var undoStack = [];
   var paint = COLORS[6];           // Accessible Beige
   var tolerance = 30;
   var busy = false;
+  var mode = 'tap';                // 'tap' | 'brush' | 'erase'
+  /* Semantic surface map (Claude vision via the server, when available):
+     a coarse grid of classes gating the fill so a tap on the wall can
+     never grow onto furniture, whatever the colors are. */
+  var seg = { grid: null, cols: 0, rows: 0, boundary: null, epoch: 0 };
 
   var status = $('vzStatus');
   function say(msg) { if (status) status.textContent = msg; }
@@ -111,18 +118,24 @@
   var LUT = buildLUT(paint.hex);
 
   /* ---------------- selection ---------------- */
-  /* Region grow from a seed. Distance is chroma-weighted against the seed
-     color: walls swing widely in brightness (shadow gradients) but hold their
-     hue, so luma differences are forgiven ~3x more than chroma differences. */
+  /* Region grow from a seed. Three signals decide each pixel:
+       color   — chroma-weighted distance to the seed (luma forgiven ~3x,
+                 because walls shade but hold their hue)
+       edges   — the tolerance collapses across strong gradients, so growth
+                 stops at trim lines and furniture silhouettes
+       texture — busy areas (plants, shelves, fabric) shrink it further
+     And when the Claude surface map is present, growth is confined to the
+     class that was tapped: wall stays wall, whatever the colors say. */
   function grow(sx, sy) {
     var d = base.data, out = new Uint8Array(W * H);
     var si = (sy * W + sx) * 4;
     var sr = d[si], sg = d[si + 1], sb = d[si + 2];
     var tolL = tolerance * 3.2, tolC = tolerance * 1.15;
+    var seedClass = seg.grid ? cellClass(sx, sy) : 0;
     var stack = [sy * W + sx];
     out[sy * W + sx] = 255;
     while (stack.length) {
-      var p = stack.pop(), px = p % W, py = (p / W) | 0, i = p * 4;
+      var p = stack.pop(), px = p % W, py = (p / W) | 0;
       var neighbors = [
         px > 0 ? p - 1 : -1, px < W - 1 ? p + 1 : -1,
         py > 0 ? p - W : -1, py < H - 1 ? p + W : -1,
@@ -134,10 +147,73 @@
         var r = d[j], g = d[j + 1], b = d[j + 2];
         var dl = Math.abs((r + g + b) - (sr + sg + sb)) / 3;
         var dc = Math.abs((r - g) - (sr - sg)) + Math.abs((b - g) - (sb - sg));
-        if (dl <= tolL && dc <= tolC) { out[q] = 255; stack.push(q); }
+        // edge + texture aware: tolerance collapses across edges (trim,
+        // furniture silhouettes) and tightens in busy texture (fabric,
+        // plants, shelves)
+        var kk = (1 - Math.min(1, grad[q] / 45) * .95) * (1 - Math.min(1, tvar[q] / 30) * .75);
+        if (dl > tolL * kk || dc > tolC * kk) continue;
+        if (seg.grid) {
+          var qx = q % W, qy = (q / W) | 0;
+          if (cellClass(qx, qy) !== seedClass) {
+            // different surface per Claude: only cross inside a boundary
+            // cell, and only for a near-exact color match (soft edges)
+            if (!cellBoundary(qx, qy) || dl > tolL * .4 || dc > tolC * .4) continue;
+          }
+        }
+        out[q] = 255; stack.push(q);
       }
     }
     return out;
+  }
+
+  /* ---- Claude surface map plumbing ---- */
+  function cellClass(x, y) {
+    var c = Math.min(seg.cols - 1, (x * seg.cols / W) | 0);
+    var r = Math.min(seg.rows - 1, (y * seg.rows / H) | 0);
+    return seg.grid[r].charCodeAt(c);
+  }
+  function cellBoundary(x, y) {
+    var c = Math.min(seg.cols - 1, (x * seg.cols / W) | 0);
+    var r = Math.min(seg.rows - 1, (y * seg.rows / H) | 0);
+    return seg.boundary[r * seg.cols + c] === 1;
+  }
+  function setSegmentation(data) {
+    if (!data || !Array.isArray(data.grid)) { seg.grid = null; return; }
+    seg.grid = data.grid; seg.cols = data.cols; seg.rows = data.rows;
+    seg.boundary = new Uint8Array(seg.cols * seg.rows);
+    for (var r = 0; r < seg.rows; r++) {
+      for (var c = 0; c < seg.cols; c++) {
+        var me = seg.grid[r].charCodeAt(c);
+        if ((c > 0 && seg.grid[r].charCodeAt(c - 1) !== me) ||
+            (c < seg.cols - 1 && seg.grid[r].charCodeAt(c + 1) !== me) ||
+            (r > 0 && seg.grid[r - 1].charCodeAt(c) !== me) ||
+            (r < seg.rows - 1 && seg.grid[r + 1].charCodeAt(c) !== me)) {
+          seg.boundary[r * seg.cols + c] = 1;
+        }
+      }
+    }
+  }
+  function requestSegmentation() {
+    setSegmentation(null);
+    var epoch = ++seg.epoch;
+    if (!/^https?:$/.test(location.protocol)) return;   // static demo: no backend
+    // downscale for the vision call
+    var full = document.createElement('canvas'); full.width = W; full.height = H;
+    full.getContext('2d').putImageData(base, 0, 0);
+    var sw = Math.min(768, W), sh = Math.round(H * sw / W);
+    var off = document.createElement('canvas'); off.width = sw; off.height = sh;
+    off.getContext('2d').drawImage(full, 0, 0, sw, sh);
+    var cols = 28, rows = Math.max(6, Math.min(30, Math.round(cols * sh / sw)));
+    fetch('/api/visualizer/segment', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: off.toDataURL('image/jpeg', .85), cols: cols, rows: rows }),
+    }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d || epoch !== seg.epoch) return;
+        setSegmentation(d);
+        say('Claude mapped the surfaces in this photo — taps now stay on what you touch (walls, cabinets, doors…).');
+      })
+      .catch(function () { /* color-based selection carries on */ });
   }
 
   /* Cheap separable box blur on the mask — feathers the cut edge. */
@@ -203,14 +279,68 @@
     for (var p = 0, i = 0; p < W * H; p++, i += 4) {
       luma[p] = (d[i] * 77 + d[i + 1] * 150 + d[i + 2] * 29) >> 8;
     }
+    analyze();
     mask = new Uint8Array(W * H);
     undoStack = [];
     canvas.hidden = false;
     var empty = $('vzEmpty'); if (empty) empty.hidden = true;
     var tools = $('vzTools'); if (tools) tools.hidden = false;
+    injectModeChips();
     render();
-    say('Tap a wall, siding or door to paint it — tap again to add more surfaces.');
+    say('Tap a wall, siding or door to paint it. Brush and Erase fine-tune any selection.');
+    requestSegmentation();
     canvas.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /* Edge + texture maps, computed once per photo. Fills stop at strong
+     edges (trim lines, furniture silhouettes) and hesitate in busy texture
+     (plants, bookshelves, patterned fabric) — the two places a pure color
+     fill leaks. */
+  function analyze() {
+    grad = new Uint8Array(W * H);
+    var x, y, p;
+    for (y = 1; y < H - 1; y++) {
+      for (x = 1; x < W - 1; x++) {
+        p = y * W + x;
+        var gx = luma[p - W + 1] + 2 * luma[p + 1] + luma[p + W + 1]
+               - luma[p - W - 1] - 2 * luma[p - 1] - luma[p + W - 1];
+        var gy = luma[p + W - 1] + 2 * luma[p + W] + luma[p + W + 1]
+               - luma[p - W - 1] - 2 * luma[p - W] - luma[p - W + 1];
+        var g = (Math.abs(gx) + Math.abs(gy)) >> 2;
+        grad[p] = g > 255 ? 255 : g;
+      }
+    }
+    // local std dev via separable box means of x and x^2 (radius 3)
+    var mean = boxBlurF(luma, 3);
+    var sq = new Float32Array(W * H);
+    for (p = 0; p < W * H; p++) sq[p] = luma[p] * luma[p];
+    var meansq = boxBlurF(sq, 3);
+    tvar = new Uint8Array(W * H);
+    for (p = 0; p < W * H; p++) {
+      var v = Math.sqrt(Math.max(0, meansq[p] - mean[p] * mean[p]));
+      tvar[p] = v > 255 ? 255 : v;
+    }
+  }
+  function boxBlurF(src, r) {
+    var tmp = new Float32Array(W * H), out = new Float32Array(W * H);
+    var span = r * 2 + 1, x, y, acc;
+    for (y = 0; y < H; y++) {
+      acc = 0;
+      for (x = -r; x <= r; x++) acc += src[y * W + Math.min(W - 1, Math.max(0, x))];
+      for (x = 0; x < W; x++) {
+        tmp[y * W + x] = acc / span;
+        acc += src[y * W + Math.min(W - 1, x + r + 1)] - src[y * W + Math.max(0, x - r)];
+      }
+    }
+    for (x = 0; x < W; x++) {
+      acc = 0;
+      for (y = -r; y <= r; y++) acc += tmp[Math.min(H - 1, Math.max(0, y)) * W + x];
+      for (y = 0; y < H; y++) {
+        out[y * W + x] = acc / span;
+        acc += tmp[Math.min(H - 1, y + r + 1) * W + x] - tmp[Math.max(0, y - r) * W + x];
+      }
+    }
+    return out;
   }
 
   function loadFile(file) {
@@ -237,12 +367,72 @@
   }
 
   /* ---------------- interactions ---------------- */
+  /* Mode chips (Tap / Brush / Erase) are injected by the engine so the
+     site and the demo stay in lockstep through the synced script. */
+  function injectModeChips() {
+    if ($('vzModes')) return;
+    var tools = $('vzTools'); if (!tools) return;
+    var row = document.createElement('div');
+    row.className = 'chips'; row.id = 'vzModes';
+    row.innerHTML =
+      '<span class="chip is-on" data-mode="tap" title="Tap a surface to select it">Tap Select</span>' +
+      '<span class="chip" data-mode="brush" title="Drag to add to the selection">Brush</span>' +
+      '<span class="chip" data-mode="erase" title="Drag to remove from the selection">Erase</span>';
+    var status = $('vzStatus');
+    status.parentNode.insertBefore(row, status.nextSibling);
+    row.addEventListener('click', function (e) {
+      var chip = e.target.closest('.chip'); if (!chip) return;
+      row.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('is-on'); });
+      chip.classList.add('is-on');
+      mode = chip.getAttribute('data-mode');
+      canvas.style.cursor = mode === 'tap' ? 'crosshair' : 'cell';
+      canvas.style.touchAction = mode === 'tap' ? 'manipulation' : 'none';
+      say(mode === 'tap' ? 'Tap a surface to select it.'
+        : mode === 'brush' ? 'Drag over the photo to add to the selection.'
+        : 'Drag over painted areas to erase the selection.');
+    });
+  }
+
+  function canvasXY(e) {
+    var r = canvas.getBoundingClientRect();
+    return [Math.round((e.clientX - r.left) / r.width * W),
+            Math.round((e.clientY - r.top) / r.height * H)];
+  }
+
+  var stroking = false, renderQueued = false;
+  function queueRender() {
+    if (renderQueued) return; renderQueued = true;
+    requestAnimationFrame(function () { renderQueued = false; render(); });
+  }
+  function dab(x, y, erase) {
+    var R = Math.max(10, Math.round(W / 55)), R2 = R * R;
+    for (var dy = -R; dy <= R; dy++) {
+      var yy = y + dy; if (yy < 0 || yy >= H) continue;
+      for (var dx = -R; dx <= R; dx++) {
+        var xx = x + dx; if (xx < 0 || xx >= W) continue;
+        var d2 = dx * dx + dy * dy; if (d2 > R2) continue;
+        var a = Math.round(255 * Math.pow(1 - Math.sqrt(d2) / R, .7));
+        var p = yy * W + xx;
+        if (erase) { if (255 - a < mask[p]) mask[p] = 255 - a < 0 ? 0 : 255 - a; }
+        else if (a > mask[p]) mask[p] = a;
+      }
+    }
+  }
+
   canvas.addEventListener('pointerdown', function (e) {
     if (!base || busy) return;
-    var r = canvas.getBoundingClientRect();
-    var x = Math.round((e.clientX - r.left) / r.width * W);
-    var y = Math.round((e.clientY - r.top) / r.height * H);
+    var xy = canvasXY(e), x = xy[0], y = xy[1];
     if (x < 0 || y < 0 || x >= W || y >= H) return;
+
+    if (mode !== 'tap') {
+      if (undoStack.length >= UNDO_CAP) undoStack.shift();
+      undoStack.push(mask.slice());
+      stroking = true;
+      canvas.setPointerCapture(e.pointerId);
+      dab(x, y, mode === 'erase'); queueRender();
+      return;
+    }
+
     busy = true; say('Painting…');
     // let the status paint before the fill work starts
     setTimeout(function () {
@@ -252,8 +442,16 @@
       for (var p = 0; p < W * H; p++) if (region[p] > mask[p]) mask[p] = region[p];
       render();
       busy = false;
-      say(paint.name + ' applied. Tap more surfaces, switch colors, or adjust the reach slider.');
+      say(paint.name + ' applied. Tap more surfaces, switch colors, or fine-tune with Brush and Erase.');
     }, 20);
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (!stroking) return;
+    var xy = canvasXY(e);
+    dab(xy[0], xy[1], mode === 'erase'); queueRender();
+  });
+  ['pointerup', 'pointercancel'].forEach(function (t) {
+    canvas.addEventListener(t, function () { stroking = false; });
   });
 
   var undoBtn = $('vzUndo'), clearBtn = $('vzClear'), dlBtn = $('vzDownload');
@@ -486,4 +684,11 @@
   });
 
   setPaint(paint);
+
+  /* Small public surface: lets tests (and future segmentation backends)
+     inject a surface map directly. */
+  window.NPCViz = {
+    setSegmentation: setSegmentation,
+    hasSegmentation: function () { return !!seg.grid; },
+  };
 })();
