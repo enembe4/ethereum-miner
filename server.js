@@ -28,6 +28,7 @@ const { notifyOwner, sendMail } = require('./lib/mailer');
 const calendar = require('./lib/calendar');
 const automations = require('./lib/automations');
 const chatai = require('./lib/chatai');
+const visualai = require('./lib/visualai');
 const seed = require('./lib/seed');
 
 const app = express();
@@ -39,7 +40,7 @@ const ADMIN_HASH = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'paint123', 10)
 
 const STAGES = ['New Lead', 'Contacted', 'Quote Sent', 'Scheduled', 'In Progress', 'Completed', 'Lost'];
 
-app.use(express.json());
+app.use(express.json({ limit: '14mb' })); // sized for visualizer photo payloads
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
   resave: false,
@@ -193,6 +194,26 @@ app.post('/api/chat', (req, res) => {
   }, 'chat');
   if (d.transcript) logActivity(lead.id, 'chat', `Transcript:\n${String(d.transcript).slice(0, 2000)}`);
   res.json({ ok: true, reference: lead.id });
+});
+
+
+/* AI visualizer: color resolution + photorealistic re-render.
+   Photos are processed in memory only — never stored or logged. */
+app.get('/api/visualizer/status', (_req, res) => res.json(visualai.status()));
+
+app.post('/api/visualizer/resolve-color', async (req, res) => {
+  try { res.json(await visualai.resolveColor((req.body || {}).query)); }
+  catch (e) { res.status(e.status || 502).json({ error: e.message }); }
+});
+
+app.post('/api/visualizer/render', async (req, res) => {
+  try {
+    const b = req.body || {};
+    res.json(await visualai.render({ image: b.image, color: b.color, surfaces: b.surfaces }));
+  } catch (e) {
+    if (!e.status || e.status >= 500) console.error('[visualizer]', e.message);
+    res.status(e.status || 502).json({ error: e.status ? e.message : 'Rendering failed — please try again.' });
+  }
 });
 
 /* Claude-powered chat. The widget checks /config once; /message runs a turn. */

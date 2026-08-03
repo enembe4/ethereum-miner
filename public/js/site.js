@@ -86,7 +86,7 @@
   }
 
   /* ---------- before / after sliders ---------- */
-  document.querySelectorAll('[data-ba]').forEach(function (ba) {
+  function initBA(ba) {
     var handle = ba.querySelector('.ba__handle');
     function set(pct) {
       pct = Math.max(2, Math.min(98, pct));
@@ -113,7 +113,9 @@
       if (e.key === 'ArrowRight') { set(now + 3); e.preventDefault(); }
     });
     set(50);
-  });
+  }
+  document.querySelectorAll('[data-ba]').forEach(initBA);
+  window.NPCSite = { initBA: initBA }; // for dynamically created sliders (AI render result)
 
   /* ---------- marquee ---------- */
   document.querySelectorAll('.marquee__track').forEach(function (track) {

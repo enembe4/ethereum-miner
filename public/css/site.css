@@ -633,6 +633,10 @@ body.has-callbar { padding-bottom: 54px; }
   font: var(--caps-xs); letter-spacing: var(--track-sm); text-transform: uppercase; color: var(--ink);
 }
 .vz__side h3 { margin-bottom: 18px; }
+.vz__ai { border: 1px solid var(--line); background: var(--paper); padding: 26px; margin-top: 20px; }
+.vz__ai-row { display: flex; gap: 12px; align-items: flex-end; }
+.vz__ai-row .input { flex: 1; }
+.vz__ai-row .btn { flex: none; }
 .vz-saved {
   display: inline-flex; align-items: center; gap: 9px;
   border: 1px solid var(--line); background: var(--paper);

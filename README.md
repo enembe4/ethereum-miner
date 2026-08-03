@@ -187,15 +187,31 @@ Progressive enhancement on every public page — with JS off (or
   (services → visualizer → quote, financing → quote, …) so the site reads as a
   path, not a menu.
 
-### Color Visualizer (`public/js/visualizer.js`)
-A real tool, not a mock: upload a photo (or load a sample), tap a wall, and a
-chroma-weighted flood fill finds the surface — forgiving of shadow gradients,
-strict about hue boundaries — feathers the mask, then recolors it through a
-luminance-preserving LUT so texture and lighting survive. Selections persist
-across color changes; undo/clear/download included. Everything runs client-side
-— the photo never leaves the device. "Add to my quote" stores picks in
-`localStorage` (`npc_colors`), the quote form surfaces them, and `quote.js`
-already attaches them to the lead.
+### Color Visualizer (`public/js/visualizer.js` + `lib/visualai.js`)
+Two tiers, and the page presents them honestly:
+
+**AI Render** (server-backed, optional) — the customer types any color from any
+major brand ("Benjamin Moore Hale Navy", "SW 7069", "Behr Blank Canvas", a hex).
+Claude resolves it to an exact spec (`/api/visualizer/resolve-color`, with a
+local-table fallback when no key is set), then reads the uploaded photo and
+writes a precise edit brief, and a dedicated image-editing model performs the
+photorealistic repaint (`/api/visualizer/render`). Claude cannot output images,
+so the render step needs `GEMINI_API_KEY` (gemini-2.5-flash-image, default) or
+`OPENAI_API_KEY` (gpt-image-1) — see `.env.example`. The result comes back as
+an original-vs-render drag slider, downloadable, and can be opened in the
+instant preview for further tapping. Photos are processed in memory only —
+never stored or logged. Without a render key the panel explains itself and the
+instant preview carries the page; with no backend at all (the static demo) the
+panel hides entirely.
+
+**Instant Preview** (always available, on-device) — tap a wall and a
+chroma-weighted flood fill finds the surface, feathers the mask, and recolors
+it through a luminance-preserving LUT so texture and lighting survive.
+Selections persist across color changes; undo/clear/reach-slider/download
+included. The photo never leaves the device.
+
+Both tiers feed the funnel: "Add to my quote" stores picks in `localStorage`
+(`npc_colors`), the quote form surfaces them, and they attach to the lead.
 
 **Fonts are self-hosted.** `scripts/fetch-fonts.sh` downloads the woff2 files
 into `public/assets/fonts/` and generates `public/css/fonts.css`, which
