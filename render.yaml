@@ -1,0 +1,38 @@
+# Render Blueprint — deploys the whole Etay Exteriors app in one shot.
+# In the Render dashboard: New + -> Blueprint -> connect this repo -> Apply.
+# Render reads this file, provisions the service + persistent disk, and
+# prompts for the secret values marked sync:false.
+services:
+  - type: web
+    name: etay-exteriors
+    runtime: node
+    plan: starter            # $7/mo — needed for the persistent disk
+    region: ohio             # closest region to Long Island customers
+    branch: claude/painting-company-website-k0pknz
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    numInstances: 1          # sessions are in-memory; keep it single-instance
+    disk:
+      name: data
+      mountPath: /var/data   # SQLite lives here and survives deploys
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0       # node:sqlite needs 22.5+
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /var/data
+      - key: SESSION_SECRET
+        generateValue: true  # Render mints a long random value
+      - key: ADMIN_USERNAME
+        value: owner
+      - key: ADMIN_PASSWORD
+        sync: false          # you'll be prompted — pick a strong one
+      - key: OWNER_EMAIL
+        sync: false          # where new-lead alerts go
+      - key: ANTHROPIC_API_KEY
+        sync: false          # Claude: chat assistant, color lookup, surface mapping
+      - key: GEMINI_API_KEY
+        sync: false          # AI photoreal rendering (leave blank to skip)

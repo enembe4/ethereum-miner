@@ -40,6 +40,13 @@ const ADMIN_HASH = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'paint123', 10)
 
 const STAGES = ['New Lead', 'Contacted', 'Quote Sent', 'Scheduled', 'In Progress', 'Completed', 'Lost'];
 
+/* Behind the host's TLS proxy (Render/Railway/Fly), secure cookies need the
+   forwarded proto to be trusted. */
+if (PROD) app.set('trust proxy', 1);
+
+/* Host health checks. */
+app.get('/healthz', (_req, res) => res.json({ ok: true }));
+
 app.use(express.json({ limit: '14mb' })); // sized for visualizer photo payloads
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
@@ -291,7 +298,7 @@ app.post('/api/portal/request-code', (req, res) => {
     const code = code6();
     const expires = new Date(Date.now() + 15 * 60 * 1000).toISOString();
     run('INSERT INTO portal_codes (email, code, expires_at, attempts) VALUES (?,?,?,0) ON CONFLICT(email) DO UPDATE SET code=excluded.code, expires_at=excluded.expires_at, attempts=0', email, code, expires);
-    sendMail(email, 'Your Nassau Painting Co. access code', `Your one-time code is: ${code}\nIt expires in 15 minutes.`);
+    sendMail(email, 'Your Etay Exteriors access code', `Your one-time code is: ${code}\nIt expires in 15 minutes.`);
     // dev convenience so it's testable before SMTP is configured:
     return res.json({ ok: true, ...(PROD ? {} : { devCode: code }) });
   }
@@ -435,6 +442,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT, () => {
   seed.seedIfEmpty();
   automations.start();
-  console.log(`\n▸ Nassau Painting site running:  http://localhost:${PORT}`);
+  console.log(`\n▸ Etay Exteriors site running:  http://localhost:${PORT}`);
   console.log(`▸ Admin (login required):        http://localhost:${PORT}/admin   [${ADMIN_USERNAME} / ${process.env.ADMIN_PASSWORD ? '••••••' : 'paint123 (default)'}]`);
 });

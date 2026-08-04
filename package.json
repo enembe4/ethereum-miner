@@ -1,8 +1,8 @@
 {
-  "name": "nassau-painting-site",
+  "name": "etay-exteriors-site",
   "version": "0.1.0",
   "private": true,
-  "description": "Nassau County Painting Co. — website + lead pipeline backend",
+  "description": "Etay Exteriors — website + lead pipeline backend",
   "type": "commonjs",
   "main": "server.js",
   "scripts": {
