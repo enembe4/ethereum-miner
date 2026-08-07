@@ -155,6 +155,38 @@ strong { font-weight: 500; color: var(--ink); }
   display: grid; place-items: center;
   font: 400 11px/1 var(--font); letter-spacing: .12em;
 }
+
+/* ---------- BRAND LOCKUP ----------
+   The Etay Paint Co. mark: script "Etay" in brick red over "PAINT CO."
+   in navy caps, with the interior/exterior tagline on the full variant.
+   The mark carries the only color on the site — everything around it
+   stays neutral. */
+:root { --brand-red: #C33C2F; --brand-navy: #2C3A50; }
+.brand {
+  display: inline-flex; flex-direction: column; align-items: center;
+  border-bottom: 0; line-height: 1; text-align: center; gap: 0;
+}
+.brand__script {
+  font-family: "Yellowtail", "Brush Script MT", cursive;
+  color: var(--brand-red); font-size: 2.35em; line-height: .9;
+  transform: rotate(-2deg); letter-spacing: .01em;
+  padding: 0 .1em .08em;
+}
+.brand__caps {
+  font-family: var(--font); font-weight: 600; color: var(--brand-navy);
+  font-size: .82em; text-transform: uppercase; letter-spacing: .3em;
+  margin-top: .1em; padding-left: .3em; /* optically recenters the tracking */
+}
+.brand__tag {
+  font-family: var(--font); font-weight: 500; color: var(--brand-navy);
+  font-size: .5em; text-transform: uppercase; letter-spacing: .34em;
+  margin-top: .75em; padding-left: .34em;
+}
+.brand__tag b { color: var(--brand-red); font-weight: 500; }
+.nav .brand { font-size: 1.06rem; transition: font-size .3s ease; }
+.nav--scrolled .brand { font-size: .88rem; }
+.footer .brand { font-size: 1.15rem; margin-bottom: 14px; }
+a.brand:hover .brand__caps { color: var(--ink); }
 .nav__links {
   display: flex; gap: 30px; align-items: center;
   flex-wrap: wrap; justify-content: center;

@@ -32,6 +32,7 @@ FONTDIR = ROOT / 'public' / 'assets' / 'fonts'
 LATIN_SUBSET = {
     'Jost': ('92zatBhPNqw73oTd4jQmfxI.woff2', (200, 500)),
     'Cormorant Garamond': ('co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtKky2F7g.woff2', (300, 400)),
+    'Yellowtail': ('OZpGg_pnoDtINPfRIlLohlvHwWL9f4k.woff2', (400, 400)),
 }
 
 DEMO_CSS = """

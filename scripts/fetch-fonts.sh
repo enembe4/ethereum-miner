@@ -15,7 +15,7 @@ FONTDIR="$ROOT/public/assets/fonts"
 OUTCSS="$ROOT/public/css/fonts.css"
 
 # Google Fonts css2 query — edit here to change the type system.
-FAMILIES="family=Jost:wght@200;300;400;500&family=Cormorant+Garamond:wght@300;400"
+FAMILIES="family=Jost:wght@200;300;400;500&family=Cormorant+Garamond:wght@300;400&family=Yellowtail"
 
 # A modern UA is required or Google serves legacy ttf instead of woff2.
 UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
