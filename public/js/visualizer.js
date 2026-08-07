@@ -470,7 +470,7 @@
     if (!base) return;
     try {
       var a = document.createElement('a');
-      a.download = 'etay-exteriors-preview.jpg';
+      a.download = 'etay-paint-co-preview.jpg';
       a.href = canvas.toDataURL('image/jpeg', .92);
       document.body.appendChild(a); a.click(); a.remove();
     } catch (e) { say('Download blocked in this preview — try a screenshot instead.'); }
@@ -658,7 +658,7 @@
             '<span class="ba__tag ba__tag--b">Original</span><span class="ba__tag ba__tag--a">' + aiState.color.name + '</span>' +
             '</div>' +
             '<div class="badge-row" style="gap:10px;margin-top:12px;">' +
-            '<a class="btn btn--sm btn--plain" id="vzAiDl" download="etay-exteriors-ai-render.png">Download Render</a>' +
+            '<a class="btn btn--sm btn--plain" id="vzAiDl" download="etay-paint-co-ai-render.png">Download Render</a>' +
             '<button class="btn btn--sm btn--plain" id="vzAiUse" type="button">Open in Instant Preview</button></div>';
           $('vzAiDl').href = res.d.image;
           if (window.NPCSite) window.NPCSite.initBA(wrap.querySelector('[data-ba]'));

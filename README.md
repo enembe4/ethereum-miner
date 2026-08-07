@@ -1,4 +1,4 @@
-# Etay Exteriors — Website + Lead Pipeline
+# Etay Paint Co. — Website + Lead Pipeline
 
 A working site for a residential painting company in Nassau County, NY, with a
 public marketing site, a lead-capture → CRM pipeline, moderated reviews, a

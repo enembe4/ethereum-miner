@@ -1,4 +1,4 @@
-# Deploying Etay Exteriors to a public URL
+# Deploying Etay Paint Co. to a public URL
 
 The app is one Node process with SQLite on disk — it needs a host with a
 persistent disk, not a static/serverless platform. Everything below is already
@@ -19,7 +19,7 @@ configured in this repo; your part is creating the account and paying.
    - `GEMINI_API_KEY` — from https://aistudio.google.com → Get API key.
      Powers the photorealistic AI renders. Leave blank to launch without it.
 5. Click **Apply**. First build takes 2–3 minutes.
-6. Your site is live at `https://etay-exteriors.onrender.com` (Render shows
+6. Your site is live at `https://etay-paint-co.onrender.com` (Render shows
    the exact URL; it may carry a random suffix).
 
 Costs: Starter service $7/mo + 1GB disk ~$0.25/mo. AI usage is pay-as-you-go
@@ -38,7 +38,7 @@ on your Anthropic/Google keys — pennies per chat or render at this scale.
 
 ### Custom domain (optional)
 Render → your service → Settings → Custom Domains → add
-`www.etayexteriors.com`, then create the CNAME record it shows you at your
+`www.etaypaintco.com`, then create the CNAME record it shows you at your
 domain registrar. TLS is automatic.
 
 ## Alternative: Railway (~$5/month)

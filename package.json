@@ -1,8 +1,8 @@
 {
-  "name": "etay-exteriors-site",
+  "name": "etay-paint-co-site",
   "version": "0.1.0",
   "private": true,
-  "description": "Etay Exteriors — website + lead pipeline backend",
+  "description": "Etay Paint Co. — website + lead pipeline backend",
   "type": "commonjs",
   "main": "server.js",
   "scripts": {

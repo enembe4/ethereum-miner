@@ -1,10 +1,10 @@
-# Render Blueprint — deploys the whole Etay Exteriors app in one shot.
+# Render Blueprint — deploys the whole Etay Paint Co. app in one shot.
 # In the Render dashboard: New + -> Blueprint -> connect this repo -> Apply.
 # Render reads this file, provisions the service + persistent disk, and
 # prompts for the secret values marked sync:false.
 services:
   - type: web
-    name: etay-exteriors
+    name: etay-paint-co
     runtime: node
     plan: starter            # $7/mo — needed for the persistent disk
     region: ohio             # closest region to Long Island customers

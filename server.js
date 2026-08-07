@@ -298,7 +298,7 @@ app.post('/api/portal/request-code', (req, res) => {
     const code = code6();
     const expires = new Date(Date.now() + 15 * 60 * 1000).toISOString();
     run('INSERT INTO portal_codes (email, code, expires_at, attempts) VALUES (?,?,?,0) ON CONFLICT(email) DO UPDATE SET code=excluded.code, expires_at=excluded.expires_at, attempts=0', email, code, expires);
-    sendMail(email, 'Your Etay Exteriors access code', `Your one-time code is: ${code}\nIt expires in 15 minutes.`);
+    sendMail(email, 'Your Etay Paint Co. access code', `Your one-time code is: ${code}\nIt expires in 15 minutes.`);
     // dev convenience so it's testable before SMTP is configured:
     return res.json({ ok: true, ...(PROD ? {} : { devCode: code }) });
   }
@@ -442,6 +442,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT, () => {
   seed.seedIfEmpty();
   automations.start();
-  console.log(`\n▸ Etay Exteriors site running:  http://localhost:${PORT}`);
+  console.log(`\n▸ Etay Paint Co. site running:  http://localhost:${PORT}`);
   console.log(`▸ Admin (login required):        http://localhost:${PORT}/admin   [${ADMIN_USERNAME} / ${process.env.ADMIN_PASSWORD ? '••••••' : 'paint123 (default)'}]`);
 });
